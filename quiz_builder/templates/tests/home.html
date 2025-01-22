@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Language Quiz Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="mb-4">Welcome to Language Quiz Platform</h1>
+            <p class="lead mb-4">Create and manage your language quizzes</p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="{% url 'create_test' %}" class="btn btn-primary btn-lg px-4 gap-3">Create New Test</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
