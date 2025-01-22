@@ -7,6 +7,7 @@ import re
 
 from .parsers import detect_test_type, parse_gap_test, parse_choice_test
 
+# Widok strony głównej - wyświetla podstawowy interfejs do tworzenia testów
 class HomeView(TemplateView):
     template_name = 'tests/home.html'
 

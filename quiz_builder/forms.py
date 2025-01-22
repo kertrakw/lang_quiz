@@ -1,5 +1,6 @@
 from django import forms
 
+# Formularz do tworzenia nowego testu - obsługuje różne typy testów i walidację danych
 class TestInputForm(forms.Form):
     # Pole na tytuł testu
     title = forms.CharField(
