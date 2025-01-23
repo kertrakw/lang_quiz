@@ -57,9 +57,16 @@ def parse_gap_test(content):
     
     return questions
 
-def parse_choice_test(content):
+def parse_choice_test(content, test_type):
     """
-    Parsuje test wyboru (zarówno z pytaniami jak i z lukami)
+    Parsuje test wyboru (SINGLE_CHOICE, MULTIPLE_CHOICE, CHOICE_WITH_GAPS)
+    
+    Args:
+        content (str): Treść testu
+        test_type (str): Typ testu ('SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS')
+    
+    Returns:
+        list: Lista pytań z odpowiedziami
     """
     # Dzielimy na pytania (według numeracji lub pustych linii)
     questions_raw = re.split(r'\n\s*\n|\n(?=\d+\.)', content.strip())
@@ -83,14 +90,28 @@ def parse_choice_test(content):
                     "letter": part[0]
                 })
         
-        # Sprawdzamy czy pytanie ma lukę
-        has_gap = '____' in question_text
+        # Przygotowujemy pytanie w zależności od typu testu
+        question_data = {
+            "id": len(questions) + 1,
+            "choices": choices
+        }
         
-        questions.append({
-            "text": question_text,
-            "has_gap": has_gap,
-            "choices": choices,
-            "id": len(questions) + 1
-        })
+        if test_type == 'CHOICE_WITH_GAPS':
+            # Dla testu z lukami, dzielimy tekst na części
+            parts = re.split(r'(_{3,})', question_text)
+            question_data["text"] = [
+                {"content": part, "is_gap": bool(re.match(r'_{3,}', part))}
+                for part in parts
+            ]
+            question_data["has_gap"] = True
+        else:
+            # Dla zwykłych testów wyboru
+            question_data["text"] = question_text
+            question_data["has_gap"] = False
+        
+        # Dla testów wielokrotnego wyboru dodajemy flagę
+        question_data["multiple_answers"] = test_type == 'MULTIPLE_CHOICE'
+        
+        questions.append(question_data)
     
     return questions

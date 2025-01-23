@@ -30,12 +30,8 @@ class TestPreviewView(TemplateView):
         # Parsujemy w zależności od wykrytego typu
         if test_type in ['TEXT_INPUT_MEMORY', 'TEXT_INPUT_WORDLIST']:
             parsed_content = parse_gap_test(content)
-        elif test_type in ['SINGLE_CHOICE']:
-            parsed_content = parse_choice_test(content)
-        elif test_type in ['MULTIPLE_CHOICE']:
-            parsed_content = parse_choice_test(content)  # możemy potrzebować osobnego parsera
-        elif test_type in ['CHOICE_WITH_GAPS']:
-            parsed_content = parse_choice_test(content)  # możemy potrzebować modyfikacji parsera
+        elif test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
+            parsed_content = parse_choice_test(content, test_type)
 
         # Przygotowujemy dane do wyświetlenia
         context = super().get_context_data(**kwargs)
