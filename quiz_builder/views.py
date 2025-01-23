@@ -2,6 +2,8 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views.generic import FormView
+from django.views import View
+from django.http import JsonResponse
 from .forms import TestInputForm
 import re
 
@@ -40,6 +42,55 @@ class TestPreviewView(TemplateView):
         })
 
         return context
+    
+class TestCheckView(View):
+    def post(self, request):
+        # Pobieramy dane testu z sesji
+        test_data = request.session.get('test_data')
+        if not test_data:
+            return JsonResponse({'error': 'No test data found'}, status=400)
+        
+        # Pobieramy przesłane odpowiedzi
+        answers = {
+            key: value for key, value in request.POST.items() 
+            if key.startswith('answer_')
+        }
+        
+        # Sprawdzamy odpowiedzi
+        results = self.check_answers(test_data, answers)
+        
+        return JsonResponse(results)
+    
+    def check_answers(self, test_data, submitted_answers):
+        """
+        Sprawdza poprawność odpowiedzi.
+        Zwraca słownik z wynikami dla każdej odpowiedzi.
+        """
+        correct_answers = test_data.get('answers', [])  # Tu trzeba będzie dodać odpowiedzi do test_data
+        results = {
+            'total': len(correct_answers),
+            'correct': 0,
+            'answers': {}
+        }
+        
+        # Sprawdzamy każdą odpowiedź
+        for q_id, correct in correct_answers.items():
+            answer_key = f'answer_{q_id}'
+            submitted = submitted_answers.get(answer_key, '').strip().lower()
+            is_correct = submitted == correct.lower()
+            
+            results['answers'][q_id] = {
+                'submitted': submitted,
+                'correct': correct,
+                'is_correct': is_correct
+            }
+            
+            if is_correct:
+                results['correct'] += 1
+                
+        results['percentage'] = (results['correct'] / results['total']) * 100
+        
+        return results
 
 class TestCreateView(FormView):
     template_name = 'tests/create_test.html'  # Szablon, który utworzymy

@@ -1,8 +1,121 @@
 <!-- templates/tests/preview_test.html -->
 {% extends 'base.html' %}
 
-{% block title %}Preview Test{% endblock %}
+{% block title %}Preview Test - {{ title }}{% endblock %}
 
 {% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">{{ title }}</h2>
+                    <span class="badge bg-light text-primary">{{ type }}</span>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="{% url 'check_test' %}" id="testForm">
+                        {% csrf_token %}
+                        
+                        {% if type == 'TEXT_INPUT' %}
+                            {% include 'tests/partials/_gap_test.html' %}
+                        {% elif type == 'MULTIPLE_CHOICE' %}
+                            {% include 'tests/partials/_choice_test.html' %}
+                        {% elif type == 'CHOICE_WITH_GAPS' %}
+                            {% include 'tests/partials/_choice_with_gaps.html' %}
+                        {% endif %}
 
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a href="{% url 'create_test' %}" class="btn btn-secondary">Back to Editor</a>
+                            <button type="submit" class="btn btn-primary">Check Answers</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal dla wyświetlania wyników -->
+<div class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Test Results</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="resultsContent">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="showAnswers">Show Correct Answers</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const testForm = document.getElementById('testForm');
+    const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+    const resultsContent = document.getElementById('resultsContent');
+    
+    testForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Zbieramy dane formularza
+        const formData = new FormData(testForm);
+        
+        // Wysyłamy żądanie AJAX
+        fetch('{% url "check_test" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+            }
+        })
+        .then(response => response.json())
+        .then(results => {
+            // Wyświetlamy wyniki
+            displayResults(results);
+            resultsModal.show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while checking the test.');
+        });
+    });
+    
+    function displayResults(results) {
+        const percentage = results.percentage.toFixed(1);
+        let html = `
+            <div class="text-center mb-4">
+                <h3>Your Score: ${percentage}%</h3>
+                <p>${results.correct} correct out of ${results.total} questions</p>
+            </div>
+        `;
+        
+        resultsContent.innerHTML = html;
+    }
+    
+    // Obsługa przycisku "Show Correct Answers"
+    document.getElementById('showAnswers').addEventListener('click', function() {
+        const inputs = testForm.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            const questionId = input.name.replace('answer_', '');
+            const result = results.answers[questionId];
+            
+            if (result) {
+                input.value = result.correct;
+                input.classList.add(
+                    result.is_correct ? 'is-valid' : 'is-invalid'
+                );
+            }
+        });
+        
+        resultsModal.hide();
+    });
+});
+</script>
 {% endblock %}
