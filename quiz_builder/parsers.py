@@ -4,28 +4,24 @@ def detect_test_type(content):
     """
     Wykrywa typ testu na podstawie jego zawartości
     """
+    # Jeśli znajdziemy listę słów na początku (np. "AT - IN - ON")
+    has_word_list = bool(re.match(r'^[A-Z\s,\-–]+$', content.split('\n')[0]))
+    
     # Jeśli znajdziemy "A.", "B.", "C." - to jest test wyboru
     has_choices = bool(re.search(r'\n[A-D]\.', content))
     
     # Jeśli znajdziemy lukę (_____) - to jest test z lukami
     has_gaps = bool(re.findall(r'_{3,}', content))
     
-    # Jeśli mamy oba elementy i luka jest w głównym tekście (nie w opcjach)
-    # to jest test wyboru z lukami do uzupełnienia
-    if has_choices and has_gaps:
-        # Sprawdzamy czy luka jest w głównym tekście pytania
-        paragraphs = content.split('\n')
-        for p in paragraphs:
-            if p.strip() and not p.startswith(('A.', 'B.', 'C.', 'D.')):
-                if '____' in p:
-                    return 'CHOICE_WITH_GAPS'
+    if has_word_list and has_gaps:
+        return 'TEXT_INPUT_WORDLIST'
+    elif has_gaps and not has_choices:
+        return 'TEXT_INPUT_MEMORY'
+    elif has_choices and not has_gaps:
+        return 'SINGLE_CHOICE'
+    elif has_choices and has_gaps:
+        return 'CHOICE_WITH_GAPS'
     
-    if has_choices:
-        return 'MULTIPLE_CHOICE'
-    
-    if has_gaps:
-        return 'TEXT_INPUT'
-        
     return None
 
 def parse_gap_test(content):

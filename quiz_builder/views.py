@@ -1,9 +1,9 @@
 # views.py
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView
-from django.views.generic import FormView
-from django.views import View
-from django.http import JsonResponse
+from django.shortcuts import render, redirect # type: ignore
+from django.views.generic import TemplateView # type: ignore
+from django.views.generic import FormView # type: ignore
+from django.views import View # type: ignore
+from django.http import JsonResponse # type: ignore
 from .forms import TestInputForm
 import re
 
@@ -28,10 +28,14 @@ class TestPreviewView(TemplateView):
         test_type = detect_test_type(content)
         
         # Parsujemy w zależności od wykrytego typu
-        if test_type in ['TEXT_INPUT']:
+        if test_type in ['TEXT_INPUT_MEMORY', 'TEXT_INPUT_WORDLIST']:
             parsed_content = parse_gap_test(content)
-        elif test_type in ['MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
+        elif test_type in ['SINGLE_CHOICE']:
             parsed_content = parse_choice_test(content)
+        elif test_type in ['MULTIPLE_CHOICE']:
+            parsed_content = parse_choice_test(content)  # możemy potrzebować osobnego parsera
+        elif test_type in ['CHOICE_WITH_GAPS']:
+            parsed_content = parse_choice_test(content)  # możemy potrzebować modyfikacji parsera
 
         # Przygotowujemy dane do wyświetlenia
         context = super().get_context_data(**kwargs)

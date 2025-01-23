@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models # type: ignore
 
 class Test(models.Model):
     # Podstawowe informacje o teście
@@ -8,9 +8,11 @@ class Test(models.Model):
     test_type = models.CharField(
         max_length=20, 
         choices=[
-            ('TEXT_INPUT_MEMORY', 'Fill in the gaps from memory'),  # Test z lukami - wpisywanie z pamięci
-            ('CHOICE_QUESTIONS', 'Multiple choice questions'),      # Test wyboru (obejmuje zarówno wybór z listy jak i pojedyncze wybory)
-            ('MULTIPLE_CHOICE', 'Multiple correct answers')         # Test z wieloma poprawnymi odpowiedziami
+            ('TEXT_INPUT_MEMORY', 'Fill in the gaps from memory'),
+            ('TEXT_INPUT_WORDLIST', 'Fill in the gaps from wordlist'),
+            ('SINGLE_CHOICE', 'Single choice test'),
+            ('MULTIPLE_CHOICE', 'Multiple choice test'),
+            ('CHOICE_WITH_GAPS', 'Choice test with gaps')
         ]
     )
     

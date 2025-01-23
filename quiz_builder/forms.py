@@ -1,4 +1,4 @@
-from django import forms
+from django import forms # type: ignore
 
 # Formularz do tworzenia nowego testu - obsługuje różne typy testów i walidację danych
 class TestInputForm(forms.Form):
@@ -15,7 +15,8 @@ class TestInputForm(forms.Form):
             ('TEXT_INPUT_MEMORY', 'Fill in the gaps from memory'),
             ('TEXT_INPUT_WORDLIST', 'Fill in the gaps from wordlist'),
             ('SINGLE_CHOICE', 'Single choice test'),
-            ('MULTIPLE_CHOICE', 'Multiple choice test')
+            ('MULTIPLE_CHOICE', 'Multiple choice test'),
+            ('CHOICE_WITH_GAPS', 'Choice test with gaps')
         ],
         label='Test type',
         widget=forms.Select(attrs={'class': 'form-control'})
