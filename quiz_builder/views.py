@@ -33,6 +33,8 @@ class TestPreviewView(TemplateView):
         elif test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
             parsed_content = parse_choice_test(content, test_type)
 
+        print("Parsed content:", parsed_content)  # <- dodajemy tutaj
+
         # Przygotowujemy dane do wyświetlenia
         context = super().get_context_data(**kwargs)
         context.update({
@@ -98,6 +100,7 @@ class TestCreateView(FormView):
     success_url = '/test/preview/'  # URL, na który przekierujemy po udanym przesłaniu formularza
 
     def form_valid(self, form):
+        print("Form is valid, data:", form.cleaned_data)  # debug
         # Ta metoda jest wywoływana gdy formularz jest poprawnie wypełniony
         
         # Pobieramy dane z formularza
@@ -139,3 +142,7 @@ class TestCreateView(FormView):
         }
         
         return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        print("Form errors:", form.errors)  # debug
+        return super().form_invalid(form)

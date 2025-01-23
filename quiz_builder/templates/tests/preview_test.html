@@ -4,6 +4,7 @@
 {% block title %}Preview Test - {{ title }}{% endblock %}
 
 {% block content %}
+{{ parsed_content|json_script:"debug-data" }}
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -18,7 +19,7 @@
                         
                         {% if type == 'TEXT_INPUT' %}
                             {% include 'tests/partials/_gap_test.html' %}
-                        {% elif type == 'MULTIPLE_CHOICE' %}
+                        {% elif type == 'SINGLE_CHOICE' or type == 'MULTIPLE_CHOICE' %}
                             {% include 'tests/partials/_choice_test.html' %}
                         {% elif type == 'CHOICE_WITH_GAPS' %}
                             {% include 'tests/partials/_choice_with_gaps.html' %}
