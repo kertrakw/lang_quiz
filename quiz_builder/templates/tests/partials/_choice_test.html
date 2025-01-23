@@ -1,0 +1,37 @@
+<!-- templates/tests/partials/_choice_test.html -->
+<div class="test-content">
+    {% for question in parsed_content %}
+        <div class="question-container mb-4">
+            <!-- Numer pytania -->
+            <div class="question-number mb-2">
+                <strong>{{ forloop.counter }}.</strong>
+            </div>
+            
+            <!-- Treść pytania -->
+            <div class="question-text mb-3">
+                {{ question.text|linebreaks }}
+            </div>
+            
+            <!-- Opcje odpowiedzi -->
+            <div class="options-container ps-4">
+                {% for choice in question.choices %}
+                    <div class="form-check mb-2">
+                        <input type="radio" 
+                               class="form-check-input" 
+                               name="answer_{{ question.id }}" 
+                               id="q{{ question.id }}_{{ choice.letter }}" 
+                               value="{{ choice.letter }}"
+                               required>
+                        <label class="form-check-label" for="q{{ question.id }}_{{ choice.letter }}">
+                            {{ choice.letter }}. {{ choice.text }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {% if not forloop.last %}
+                <hr class="my-4">
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
