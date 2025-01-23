@@ -1,0 +1,87 @@
+<!-- templates/tests/partials/_choice_with_gaps.html -->
+<div class="test-content">
+  {% for question in parsed_content %}
+  <div class="question-container mb-4">
+    <!-- Numer pytania -->
+    <div class="question-number mb-2">
+      <strong>{{ forloop.counter }}.</strong>
+    </div>
+
+    <!-- Treść pytania z możliwością wielokrotnego wyboru -->
+    <div class="question-text mb-3">
+      {% for part in question.text %} {% if part.is_gap %}
+      <select
+        name="answer_{{ question.id }}"
+        class="form-select d-inline-block mx-1"
+        style="width: auto; min-width: 120px"
+        required
+      >
+        <option value="">Select...</option>
+        {% for choice in question.choices %}
+        <option value="{{ choice.letter }}">{{ choice.text }}</option>
+        {% endfor %}
+      </select>
+      {% else %} {{ part }} {% endif %} {% endfor %}
+    </div>
+
+    <!-- Alternatywnie, można wyświetlić opcje jako listę pod pytaniem -->
+    <div class="options-container ps-4">
+      {% for choice in question.choices %}
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          name="answer_{{ question.id }}_multiple"
+          id="q{{ question.id }}_{{ choice.letter }}"
+          value="{{ choice.letter }}"
+        />
+        <label
+          class="form-check-label"
+          for="q{{ question.id }}_{{ choice.letter }}"
+        >
+          {{ choice.letter }}. {{ choice.text }}
+        </label>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if not forloop.last %}
+    <hr class="my-4" />
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Dodajemy JavaScript do obsługi synchronizacji między select a checkboxami -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const questions = document.querySelectorAll(".question-container");
+
+    questions.forEach((question) => {
+      const select = question.querySelector("select");
+      const checkboxes = question.querySelectorAll('input[type="checkbox"]');
+
+      // Synchronizacja z selecta do checkboxów
+      select?.addEventListener("change", function () {
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = checkbox.value === this.value;
+        });
+      });
+
+      // Synchronizacja z checkboxów do selecta
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", function () {
+          // Odznaczamy inne checkboxy
+          checkboxes.forEach((cb) => {
+            if (cb !== this) cb.checked = false;
+          });
+
+          // Ustawiamy wartość w selekcie
+          if (select) {
+            select.value = this.checked ? this.value : "";
+          }
+        });
+      });
+    });
+  });
+</script>
