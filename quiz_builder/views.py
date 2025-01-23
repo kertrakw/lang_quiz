@@ -115,13 +115,27 @@ class TestCreateView(FormView):
         if word_list:
             available_words = [word.strip() for word in word_list.split(',')]
 
-        # Zapisujemy dane w sesji
+        # Znajdujemy odpowiedzi w nawiasach kwadratowych [at,on,at,in,on]
+        answer_match = re.search(r'\[(.*?)\]', content)
+        if answer_match:
+            answers_str = answer_match.group(1)
+            answers_list = [ans.strip() for ans in answers_str.split(',')]
+            
+            # Tworzymy słownik odpowiedzi
+            answers = {
+                str(i+1): answer for i, answer in enumerate(answers_list)
+            }
+            
+            # Usuwamy linię z odpowiedziami z treści testu
+            content = re.sub(r'\[.*?\]', '', content).strip()
+        
+        # Zapisujemy w sesji
         self.request.session['test_data'] = {
-            'title': title,
-            'type': test_type,
+            'title': form.cleaned_data['title'],
+            'type': form.cleaned_data['test_type'],
             'content': content,
-            'word_list': available_words,
-            'number_of_gaps': number_of_gaps
+            'word_list': form.cleaned_data.get('word_list', '').split(','),
+            'answers': answers  # dodajemy odpowiedzi
         }
         
         return super().form_valid(form)
