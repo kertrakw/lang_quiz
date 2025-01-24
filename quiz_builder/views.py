@@ -21,25 +21,24 @@ class TestPreviewView(TemplateView):
         test_data = self.request.session.get('test_data')
         
         if not test_data:
-            # Jeśli nie ma danych w sesji, przekierowujemy do tworzenia testu
             return redirect('create_test')
         
         content = test_data['content']
-        test_type = detect_test_type(content)
+        test_type = test_data['type']  # bierzemy typ z sesji
         
         # Parsujemy w zależności od wykrytego typu
+        print("===== Test type from session:", test_type)
         if test_type in ['TEXT_INPUT_MEMORY', 'TEXT_INPUT_WORDLIST']:
             parsed_content = parse_gap_test(content)
         elif test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
             parsed_content = parse_choice_test(content, test_type)
 
-        print("Parsed content:", parsed_content)  # <- dodajemy tutaj
-
-        # Przygotowujemy dane do wyświetlenia
+        print("Parsed content:", parsed_content)
+        
         context = super().get_context_data(**kwargs)
         context.update({
             'title': test_data['title'],
-            'type': test_type,
+            'type': test_type,  # używamy typu z sesji
             'parsed_content': parsed_content
         })
 

@@ -12,15 +12,21 @@ def detect_test_type(content):
     
     # Jeśli znajdziemy lukę (_____) - to jest test z lukami
     has_gaps = bool(re.findall(r'_{3,}', content))
+
+    # Jeśli znajdziemy odpowiedzi z wieloma opcjami [A,C]
+    has_multiple_answers = bool(re.search(r'\[(.*?,.*?)\]', content))
     
     if has_word_list and has_gaps:
         return 'TEXT_INPUT_WORDLIST'
     elif has_gaps and not has_choices:
         return 'TEXT_INPUT_MEMORY'
-    elif has_choices and not has_gaps:
-        return 'SINGLE_CHOICE'
-    elif has_choices and has_gaps:
-        return 'CHOICE_WITH_GAPS'
+    elif has_choices:
+        if has_multiple_answers:
+            return 'MULTIPLE_CHOICE'
+        elif has_gaps:
+            return 'CHOICE_WITH_GAPS'
+        else:
+            return 'SINGLE_CHOICE'
     
     return None
 
@@ -93,24 +99,20 @@ def parse_choice_test(content, test_type):
         # Przygotowujemy pytanie w zależności od typu testu
         question_data = {
             "id": len(questions) + 1,
-            "choices": choices
+            "choices": choices,
+            "multiple_answers": test_type == 'MULTIPLE_CHOICE',  # to musi być PRZED przetwarzaniem tekstu
+            "text": question_text,  # domyślnie cały tekst
+            "has_gap": False  # domyślnie bez luk
         }
         
+        # Tylko jeśli to CHOICE_WITH_GAPS, zmieniamy strukturę tekstu
         if test_type == 'CHOICE_WITH_GAPS':
-            # Dla testu z lukami, dzielimy tekst na części
             parts = re.split(r'(_{3,})', question_text)
             question_data["text"] = [
                 {"content": part, "is_gap": bool(re.match(r'_{3,}', part))}
                 for part in parts
             ]
             question_data["has_gap"] = True
-        else:
-            # Dla zwykłych testów wyboru
-            question_data["text"] = question_text
-            question_data["has_gap"] = False
-        
-        # Dla testów wielokrotnego wyboru dodajemy flagę
-        question_data["multiple_answers"] = test_type == 'MULTIPLE_CHOICE'
         
         questions.append(question_data)
     

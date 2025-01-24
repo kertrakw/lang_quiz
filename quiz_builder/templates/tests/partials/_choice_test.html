@@ -16,12 +16,17 @@
             <div class="options-container ps-4">
                 {% for choice in question.choices %}
                     <div class="form-check mb-2">
-                        <input type="radio" 
-                               class="form-check-input" 
-                               name="answer_{{ question.id }}" 
-                               id="q{{ question.id }}_{{ choice.letter }}" 
-                               value="{{ choice.letter }}"
-                               required>
+                        <input 
+                            {% if question.multiple_answers %}
+                                type="checkbox"
+                            {% else %}
+                                type="radio"
+                            {% endif %}
+                            class="form-check-input" 
+                            name="answer_{{ question.id }}" 
+                            id="q{{ question.id }}_{{ choice.letter }}" 
+                            value="{{ choice.letter }}"
+                            {% if not question.multiple_answers %}required{% endif %}>
                         <label class="form-check-label" for="q{{ question.id }}_{{ choice.letter }}">
                             {{ choice.letter }}. {{ choice.text }}
                         </label>
