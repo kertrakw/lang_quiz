@@ -1,5 +1,44 @@
 import re
 
+def standardize_choice_marker(text):
+   """
+   Konwertuje różne formaty oznaczeń na standardowy format A., B., C., D.
+   
+   Akceptuje formaty:
+   - A., A), a., a), (A), (a)
+   - 1., 1), (1)
+   - myślnik (-)
+   
+   Args:
+       text (str): Tekst zaczynający się od oznaczenia (np. "A) odpowiedź" lub "- odpowiedź")
+   
+   Returns:
+       tuple: (standardowy_marker, treść_odpowiedzi) np. ("A", "odpowiedź")
+   """
+   # Usuwamy whitespace z początku
+   text = text.strip()
+   
+   # Jeśli zaczyna się od myślnika
+   if text.startswith('-'):
+       return None, text[1:].strip()
+       
+   # Szukamy różnych formatów na początku tekstu
+   marker_match = re.match(r'^[(\s]*([A-Da-d]|[1-4])[.).]\s*(.+)$', text)
+   
+   if marker_match:
+       marker, content = marker_match.groups()
+       
+       # Konwertujemy cyfry na litery (1->A, 2->B, itd.)
+       if marker.isdigit():
+           marker = chr(ord('A') + int(marker) - 1)
+           
+       # Konwertujemy na wielką literę
+       marker = marker.upper()
+       
+       return marker, content.strip()
+       
+   return None, text
+
 def detect_test_type(content):
     """
     Wykrywa typ testu na podstawie jego zawartości
@@ -88,13 +127,26 @@ def parse_choice_test(content, test_type):
         
         # Znajdujemy odpowiedzi
         choices = []
+        choice_letter = 'A'  # do automatycznego numerowania
+
         for part in parts[1:]:
-            if re.match(r'[A-D]\.', part.strip()):
-                choice_text = part[2:].strip()  # Usuwamy "A." itp.
-                choices.append({
-                    "text": choice_text,
-                    "letter": part[0]
-                })
+            part = part.strip()
+            if not part:
+                continue
+                
+            marker, choice_text = standardize_choice_marker(part)
+            
+            if marker is None:
+                # Jeśli nie znaleziono markera, używamy automatycznego
+                marker = choice_letter
+                
+            choices.append({
+                "text": choice_text,
+                "letter": marker
+            })
+            
+            # Przygotowujemy następną literę dla automatycznego numerowania
+            choice_letter = chr(ord(choice_letter) + 1)
         
         # Przygotowujemy pytanie w zależności od typu testu
         question_data = {
