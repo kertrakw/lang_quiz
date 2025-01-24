@@ -7,6 +7,12 @@ A Django application for creating and managing language learning tests.
 - Automatic test parsing from text input
 - Test preview and validation
 - Test categorization with tags
+- Multiple test types (gap filling, word choice, single/multiple choice)
+- Automatic test parsing from text input
+- Test preview and validation
+- Test categorization with tags
+- Support for various answer formats (A., a), 1), -)
+- Automatic format standardization
 
 ## Requirements
 - Python 3.11+

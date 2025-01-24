@@ -22,3 +22,15 @@ All notable changes to this project will be documented in this file.
 - Tag system
 - User authentication
 - API endpoints
+
+## [0.2.0] - 2025-01-24
+### Added
+- Obsługa różnych formatów oznaczeń odpowiedzi (a), A., 1), -)
+- Automatyczna konwersja formatów na standardowy (A., B., C., D.)
+
+### Changed
+- Poprawiono obsługę testu typu MULTIPLE_CHOICE
+- Zmieniono sposób wykrywania typu testu w preview (użycie typu z sesji)
+
+### Fixed
+- Naprawiono wyświetlanie właściwych kontrolek dla MULTIPLE_CHOICE (checkboxy zamiast radio buttons)
