@@ -104,50 +104,53 @@ class TestInputForm(forms.Form):
 
         if not content:
             return cleaned_data
-
-        # Walidacja dla testu z listą słów
-        if test_type == 'TEXT_INPUT_WORDLIST':
-            if not word_list:
-                raise ValidationError(
-                    "Lista słów jest wymagana dla typu 'Fill in the gaps from wordlist'"
-                )
-            # Sprawdzamy czy wszystkie słowa z word_list są użyte w odpowiedziach
-            words = {w.strip() for w in word_list.split(',')}
+        
+        try:
+            # Jednorazowa walidacja odpowiedzi
             answers = self.validate_answers(content, test_type)
-            unused_words = words - {ans.strip() for ans in answers}
-            if unused_words:
-                raise ValidationError(
-                    f"Następujące słowa z listy nie są użyte w teście: {', '.join(unused_words)}"
-                )
+            cleaned_data['answers'] = answers
 
-        # Walidacja dla testów wyboru
-        elif test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
-            # Sprawdzamy czy są opcje wyboru
-            lines = content.split('\n')
-            options_found = False
-            for line in lines:
-                if re.match(r'^[A-Da-d1-4][.).]\s', line.strip()):
-                    options_found = True
-                    break
-            if not options_found:
-                raise ValidationError(
-                    "Test wyboru musi zawierać opcje oznaczone A., B., C., D. lub 1., 2., 3., 4."
-                )
-
-            # Walidacja odpowiedzi
-            answers = self.validate_answers(content, test_type)
-            
-            # Sprawdzamy czy odpowiedzi odnoszą się do istniejących opcji
-            available_options = set()
-            for line in lines:
-                match = re.match(r'^([A-Da-d1-4])[.).]\s', line.strip())
-                if match:
-                    available_options.add(match.group(1).upper())
-            
-            for ans in answers:
-                if ans.upper() not in available_options:
+            # Walidacja dla testu z listą słów
+            if test_type == 'TEXT_INPUT_WORDLIST':
+                if not word_list:
                     raise ValidationError(
-                        f"Odpowiedź {ans} odnosi się do nieistniejącej opcji"
+                        "Lista słów jest wymagana dla typu 'Fill in the gaps from wordlist'"
                     )
+                # Sprawdzamy czy wszystkie słowa z word_list są użyte w odpowiedziach
+                words = {w.strip() for w in word_list.split(',')}
+                unused_words = words - {ans.strip() for ans in answers}
+                if unused_words:
+                    raise ValidationError(
+                        f"Następujące słowa z listy nie są użyte w teście: {', '.join(unused_words)}"
+                    )
+
+            # Walidacja dla testów wyboru
+            elif test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
+                # Sprawdzamy czy są opcje wyboru
+                lines = [line.strip() for line in content.split('\n') if line.strip()]
+                options_found = False
+                available_options = set()
+                
+                for line in lines:
+                    match = re.match(r'^([A-Da-d1-4])[.).]\s', line)
+                    if match:
+                        options_found = True
+                        available_options.add(match.group(1).upper())
+                
+                if not options_found:
+                    raise ValidationError(
+                        "Test wyboru musi zawierać opcje oznaczone A., B., C., D. lub 1., 2., 3., 4."
+                    )
+
+                # Sprawdzamy czy odpowiedzi odnoszą się do istniejących opcji
+                for ans in answers:
+                    if ans.upper() not in available_options:
+                        raise ValidationError(
+                            f"Odpowiedź {ans} odnosi się do nieistniejącej opcji"
+                        )
+                        
+        except ValidationError as e:
+            print(f"Validation error: {str(e)}")  # debug
+            raise ValidationError(str(e))
 
         return cleaned_data

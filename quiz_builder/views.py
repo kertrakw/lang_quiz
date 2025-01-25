@@ -101,27 +101,29 @@ class TestCreateView(FormView):
 
  # views.py - w klasie TestCreateView, metoda form_valid
     def form_valid(self, form):
-        try:
-            cleaned_data = form.cleaned_data
-            content = cleaned_data['content']
-            test_type = cleaned_data['test_type']
-            
-            # validate_answers rzuci ValidationError jeśli coś jest nie tak
-            answers = form.validate_answers(content, test_type)
-                    
-            self.request.session['test_data'] = {
-                'title': cleaned_data['title'],
-                'type': test_type,
-                'content': content,
-                'word_list': cleaned_data.get('word_list', '').split(','),
-                'answers': answers
-            }
-            
-            return super().form_valid(form)
-                
-        except ValidationError as e:
-            form.add_error(None, str(e))
-            return self.form_invalid(form)
+        """
+        Metoda wywoływana gdy formularz jest poprawnie wypełniony.
+        Walidacja jest już wykonana w formularzu.
+        """
+        # Pobieramy wyczyszczone dane
+        cleaned_data = form.cleaned_data
+        content = cleaned_data['content']
+        test_type = cleaned_data['test_type']
+        answers = cleaned_data.get('answers', [])
+
+        # Konwertujemy odpowiedzi na słownik dla TestCheckView
+        answers_dict = {str(i+1): ans for i, ans in enumerate(answers)}
+
+        # Przygotowujemy dane do sesji
+        self.request.session['test_data'] = {
+            'title': cleaned_data['title'],
+            'type': test_type,
+            'content': content,
+            'word_list': cleaned_data.get('word_list', '').split(','),
+            'answers': answers_dict
+        }
+        
+        return super().form_valid(form)
     
     def form_invalid(self, form):
         print("Form errors:", form.errors)  # debug
