@@ -92,8 +92,8 @@ class TestInputForm(forms.Form):
                     print(f"Duplicate answer found: {ans}")  # Debug
                     print(f"Current seen answers: {seen}")  # Debug
                     raise ValidationError(
-                        f"Wykryto powtórzoną odpowiedź: {ans}. "
-                        "W teście wielokrotnego wyboru każda odpowiedź może wystąpić tylko raz."
+                        f"Odpowiedź '{ans}' została już użyta. "
+                        "Każda odpowiedź w teście wielokrotnego wyboru może wystąpić tylko jeden raz."
                     )
                 seen.add(ans.upper())
                 print(f"Added to seen: {ans.upper()}, current seen: {seen}")  # Debug    
