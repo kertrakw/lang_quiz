@@ -113,6 +113,9 @@ def parse_choice_test(content, test_type):
     Returns:
         list: Lista pytań z odpowiedziami
     """
+    # Usuwamy linię z odpowiedziami przed parsowaniem
+    content = re.sub(r'\[.*?\]$', '', content).strip()
+    
     # Dzielimy na pytania (według numeracji lub pustych linii)
     questions_raw = re.split(r'\n\s*\n|\n(?=\d+\.)', content.strip())
     questions = []
@@ -128,6 +131,10 @@ def parse_choice_test(content, test_type):
         # Znajdujemy odpowiedzi
         choices = []
         choice_letter = 'A'  # do automatycznego numerowania
+
+        # Pomijamy linię z odpowiedziami w nawiasach kwadratowych
+        if re.match(r'\[.*?\]$', part.strip()):
+            continue
 
         for part in parts[1:]:
             part = part.strip()
