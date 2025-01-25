@@ -86,8 +86,10 @@ class TestInputForm(forms.Form):
                         "Dla testów wielokrotnego wyboru użyj A-D lub 1-4"
                     )
                 if ans.upper() in seen:
-                    raise ValidationError(f"Duplikat odpowiedzi: {ans}")
-                seen.add(ans.upper())
+                    raise ValidationError(
+                        f"Wykryto powtórzoną odpowiedź: {ans}. "
+                        "W teście wielokrotnego wyboru każda odpowiedź może wystąpić tylko raz."
+                    )
 
         return answers
     

@@ -14,6 +14,13 @@
                 <div class="card-body p-4">
                     <form method="post">
                         {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mb-4">
+                                <strong>Błędy w formularzu:</strong>
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
                         
                         <!-- Tytuł testu -->
                         <div class="mb-4">
