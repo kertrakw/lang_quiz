@@ -69,6 +69,18 @@ def detect_test_type(content):
     
     return None
 
+def clean_question_text(text):
+    """
+    Usuwa numerację z początku pytania.
+    
+    Args:
+        text (str): Tekst pytania
+    
+    Returns:
+        str: Tekst bez numeracji
+    """
+    return re.sub(r'^\d+[.).]\s*', '', text.strip())
+
 def parse_gap_test(content):
     """
     Parsuje test z lukami (zarówno jednolinijkowy jak i wielolinijkowy)
@@ -80,6 +92,9 @@ def parse_gap_test(content):
     for line in lines:
         if not line.strip():  # Pomijamy puste linie
             continue
+
+        # Usuwamy numerację z początku linii
+        line = clean_question_text(line)
             
         # Znajdujemy wszystkie luki w linii
         parts = re.split(r'(_{3,})', line)
@@ -126,6 +141,10 @@ def parse_choice_test(content, test_type):
             
         # Dzielimy na pytanie i odpowiedzi
         parts = q_raw.split('\n')
+
+        # Usuwamy numerację z początku pytania
+        question_text = clean_question_text(parts[0])
+
         question_text = parts[0].strip()
         
         # Znajdujemy odpowiedzi
