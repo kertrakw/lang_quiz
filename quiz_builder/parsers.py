@@ -132,10 +132,6 @@ def parse_choice_test(content, test_type):
         choices = []
         choice_letter = 'A'  # do automatycznego numerowania
 
-        # Pomijamy linię z odpowiedziami w nawiasach kwadratowych
-        if re.match(r'\[.*?\]$', part.strip()):
-            continue
-
         for part in parts[1:]:
             part = part.strip()
             if not part:

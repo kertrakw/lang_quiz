@@ -101,23 +101,14 @@ class TestCreateView(FormView):
 
  # views.py - w klasie TestCreateView, metoda form_valid
     def form_valid(self, form):
-        # Upewniamy się, że walidacja została wykonana
-        if not form.is_valid():
-            return self.form_invalid(form)
-            
         try:
-            # Dodatkowa walidacja struktury testu
             cleaned_data = form.cleaned_data
             content = cleaned_data['content']
             test_type = cleaned_data['test_type']
             
-            # Sprawdzamy czy odpowiedzi są poprawne przed utworzeniem testu
+            # validate_answers rzuci ValidationError jeśli coś jest nie tak
             answers = form.validate_answers(content, test_type)
-            if not answers:
-                form.add_error(None, "Nie można zwalidować odpowiedzi w teście")
-                return self.form_invalid(form)
-                
-            # Reszta kodu pozostaje bez zmian
+                    
             self.request.session['test_data'] = {
                 'title': cleaned_data['title'],
                 'type': test_type,
@@ -127,7 +118,7 @@ class TestCreateView(FormView):
             }
             
             return super().form_valid(form)
-            
+                
         except ValidationError as e:
             form.add_error(None, str(e))
             return self.form_invalid(form)
