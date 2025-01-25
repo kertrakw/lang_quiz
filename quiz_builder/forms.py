@@ -79,17 +79,24 @@ class TestInputForm(forms.Form):
             # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
             # oraz czy nie ma duplikatów
             seen = set()
+            print(f"Checking for duplicates in answers: {answers}")  # Debug
             for ans in answers:
+                
                 if not re.match(r'^[A-Da-d1-4]$', ans):
+                    print(f"Invalid format for answer: {ans}")  # Debug
                     raise ValidationError(
                         f"Niepoprawny format odpowiedzi: {ans}. "
                         "Dla testów wielokrotnego wyboru użyj A-D lub 1-4"
                     )
                 if ans.upper() in seen:
+                    print(f"Duplicate answer found: {ans}")  # Debug
+                    print(f"Current seen answers: {seen}")  # Debug
                     raise ValidationError(
                         f"Wykryto powtórzoną odpowiedź: {ans}. "
                         "W teście wielokrotnego wyboru każda odpowiedź może wystąpić tylko raz."
                     )
+                seen.add(ans.upper())
+                print(f"Added to seen: {ans.upper()}, current seen: {seen}")  # Debug    
 
         return answers
     

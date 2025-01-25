@@ -111,8 +111,15 @@ class TestCreateView(FormView):
         test_type = cleaned_data['test_type']
         answers = cleaned_data.get('answers', [])
 
+        # Debug
+        print("=== Form validation passed ===")
+        print("Content:", content)
+        print("Type:", test_type)
+        print("Answers:", answers)
+
         # Konwertujemy odpowiedzi na słownik dla TestCheckView
         answers_dict = {str(i+1): ans for i, ans in enumerate(answers)}
+        print("Answers dict:", answers_dict)  # Debug
 
         # Przygotowujemy dane do sesji
         self.request.session['test_data'] = {
