@@ -68,6 +68,13 @@ class TestInputForm(forms.Form):
 
         # Walidacja w zależności od typu testu
         if test_type in ['SINGLE_CHOICE', 'CHOICE_WITH_GAPS']:
+
+            # Sprawdzamy czy jest dokładnie jedna odpowiedź
+            if len(answers) > 1:
+                raise ValidationError(
+                    "This type of test must have exactly one answer. "
+                    f"Found {len(answers)} answers: [{', '.join(answers)}]"
+                )
             # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
             for ans in answers:
                 if not re.match(r'^[A-Da-d1-4]$', ans):
