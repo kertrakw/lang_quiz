@@ -34,3 +34,17 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Naprawiono wyświetlanie właściwych kontrolek dla MULTIPLE_CHOICE (checkboxy zamiast radio buttons)
+
+## [0.2.1] - 2025-01-25
+### Added
+- Single answer validation for non-multiple choice tests
+- Detailed validation feedback for answers
+
+### Changed
+- Translated all validation error messages to English
+- Improved error message display in form interface
+
+### Fixed
+- Validation for duplicate answers in multiple choice tests
+- Form error messages display
+- Answer count validation for different test types
