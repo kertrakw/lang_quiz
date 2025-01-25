@@ -3,7 +3,8 @@ from django.shortcuts import render, redirect # type: ignore
 from django.views.generic import TemplateView # type: ignore
 from django.views.generic import FormView # type: ignore
 from django.views import View # type: ignore
-from django.http import JsonResponse # type: ignore
+from django.http import JsonResponse 
+from django.core.exceptions import ValidationError
 from .forms import TestInputForm
 import re
 
@@ -98,49 +99,38 @@ class TestCreateView(FormView):
     form_class = TestInputForm
     success_url = '/test/preview/'  # URL, na który przekierujemy po udanym przesłaniu formularza
 
+ # views.py - w klasie TestCreateView, metoda form_valid
     def form_valid(self, form):
-        print("Form is valid, data:", form.cleaned_data)  # debug
-        # Ta metoda jest wywoływana gdy formularz jest poprawnie wypełniony
-        
-        # Pobieramy dane z formularza
-        title = form.cleaned_data['title']
-        test_type = form.cleaned_data['test_type']
-        content = form.cleaned_data['content']
-        word_list = form.cleaned_data.get('word_list', '')
-        
-        # Parsujemy zawartość testu
-        gaps = re.findall(r'___', content)  # Znajdujemy wszystkie luki w teście
-        number_of_gaps = len(gaps)
-        
-        # Jeśli mamy listę słów, przetwarzamy ją
-        available_words = []
-        if word_list:
-            available_words = [word.strip() for word in word_list.split(',')]
-
-        # Znajdujemy odpowiedzi w nawiasach kwadratowych [at,on,at,in,on]
-        answer_match = re.search(r'\[(.*?)\]', content)
-        if answer_match:
-            answers_str = answer_match.group(1)
-            answers_list = [ans.strip() for ans in answers_str.split(',')]
+        # Upewniamy się, że walidacja została wykonana
+        if not form.is_valid():
+            return self.form_invalid(form)
             
-            # Tworzymy słownik odpowiedzi
-            answers = {
-                str(i+1): answer for i, answer in enumerate(answers_list)
+        try:
+            # Dodatkowa walidacja struktury testu
+            cleaned_data = form.cleaned_data
+            content = cleaned_data['content']
+            test_type = cleaned_data['test_type']
+            
+            # Sprawdzamy czy odpowiedzi są poprawne przed utworzeniem testu
+            answers = form.validate_answers(content, test_type)
+            if not answers:
+                form.add_error(None, "Nie można zwalidować odpowiedzi w teście")
+                return self.form_invalid(form)
+                
+            # Reszta kodu pozostaje bez zmian
+            self.request.session['test_data'] = {
+                'title': cleaned_data['title'],
+                'type': test_type,
+                'content': content,
+                'word_list': cleaned_data.get('word_list', '').split(','),
+                'answers': answers
             }
             
-            # Usuwamy linię z odpowiedziami z treści testu
-            content = re.sub(r'\[.*?\]', '', content).strip()
-        
-        # Zapisujemy w sesji
-        self.request.session['test_data'] = {
-            'title': form.cleaned_data['title'],
-            'type': form.cleaned_data['test_type'],
-            'content': content,
-            'word_list': form.cleaned_data.get('word_list', '').split(','),
-            'answers': answers  # dodajemy odpowiedzi
-        }
-        
-        return super().form_valid(form)
+            return super().form_valid(form)
+            
+        except ValidationError as e:
+            form.add_error(None, str(e))
+            return self.form_invalid(form)
     
     def form_invalid(self, form):
         print("Form errors:", form.errors)  # debug
