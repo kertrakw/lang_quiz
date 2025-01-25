@@ -62,7 +62,7 @@ class TestInputForm(forms.Form):
         # Szukamy odpowiedzi w nawiasach kwadratowych na końcu tekstu
         answer_match = re.search(r'\[(.*?)\]$', content.strip())
         if not answer_match:
-            raise ValidationError("Brak odpowiedzi w nawiasach kwadratowych na końcu testu")
+            raise ValidationError("No answers found in square brackets at the end of the test")
 
         answers = [ans.strip() for ans in answer_match.group(1).split(',')]
 
@@ -72,8 +72,8 @@ class TestInputForm(forms.Form):
             for ans in answers:
                 if not re.match(r'^[A-Da-d1-4]$', ans):
                     raise ValidationError(
-                        f"Niepoprawny format odpowiedzi: {ans}. "
-                        "Dla testów jednokrotnego wyboru użyj A-D lub 1-4"
+                        f"Invalid answer format: {ans}. "
+                        "For single choice tests use A-D or 1-4"
                     )
         elif test_type == 'MULTIPLE_CHOICE':
             # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
@@ -85,15 +85,15 @@ class TestInputForm(forms.Form):
                 if not re.match(r'^[A-Da-d1-4]$', ans):
                     print(f"Invalid format for answer: {ans}")  # Debug
                     raise ValidationError(
-                        f"Niepoprawny format odpowiedzi: {ans}. "
-                        "Dla testów wielokrotnego wyboru użyj A-D lub 1-4"
+                        f"Invalid answer format: {ans}. "
+                        "For multiple choice tests use A-D or 1-4"
                     )
                 if ans.upper() in seen:
                     print(f"Duplicate answer found: {ans}")  # Debug
                     print(f"Current seen answers: {seen}")  # Debug
                     raise ValidationError(
-                        f"Odpowiedź '{ans}' została już użyta. "
-                        "Każda odpowiedź w teście wielokrotnego wyboru może wystąpić tylko jeden raz."
+                        f"Answer '{ans}' has already been used. "
+                        "Each answer in multiple choice test can be used only once."
                     )
                 seen.add(ans.upper())
                 print(f"Added to seen: {ans.upper()}, current seen: {seen}")  # Debug    
@@ -121,14 +121,14 @@ class TestInputForm(forms.Form):
             if test_type == 'TEXT_INPUT_WORDLIST':
                 if not word_list:
                     raise ValidationError(
-                        "Lista słów jest wymagana dla typu 'Fill in the gaps from wordlist'"
+                        "Word list is required for 'Fill in the gaps from wordlist' type"
                     )
                 # Sprawdzamy czy wszystkie słowa z word_list są użyte w odpowiedziach
                 words = {w.strip() for w in word_list.split(',')}
                 unused_words = words - {ans.strip() for ans in answers}
                 if unused_words:
                     raise ValidationError(
-                        f"Następujące słowa z listy nie są użyte w teście: {', '.join(unused_words)}"
+                        f"Following words from the list are not used in the test: {', '.join(unused_words)}"
                     )
 
             # Walidacja dla testów wyboru
@@ -146,14 +146,14 @@ class TestInputForm(forms.Form):
                 
                 if not options_found:
                     raise ValidationError(
-                        "Test wyboru musi zawierać opcje oznaczone A., B., C., D. lub 1., 2., 3., 4."
+                        "Choice test must contain options marked as A., B., C., D. or 1., 2., 3., 4."
                     )
 
                 # Sprawdzamy czy odpowiedzi odnoszą się do istniejących opcji
                 for ans in answers:
                     if ans.upper() not in available_options:
                         raise ValidationError(
-                            f"Odpowiedź {ans} odnosi się do nieistniejącej opcji"
+                            f"Answer {ans} refers to a non-existent option"
                         )
                         
         except ValidationError as e:
