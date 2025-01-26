@@ -42,7 +42,7 @@ class TestPreviewView(TemplateView):
             'type': test_type,  # używamy typu z sesji
             'parsed_content': parsed_content
         })
-
+        print("Context:", context)  # Debug
         return context
     
 class TestCheckView(View):

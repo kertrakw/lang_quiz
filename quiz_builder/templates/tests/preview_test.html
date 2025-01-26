@@ -17,7 +17,7 @@
                     <form method="post" action="{% url 'check_test' %}" id="testForm">
                         {% csrf_token %}
                         
-                        {% if type == 'TEXT_INPUT' %}
+                        {% if type == 'TEXT_INPUT_MEMORY' or type == 'TEXT_INPUT_WORDLIST' %}
                             {% include 'tests/partials/_gap_test.html' %}
                         {% elif type == 'SINGLE_CHOICE' or type == 'MULTIPLE_CHOICE' %}
                             {% include 'tests/partials/_choice_test.html' %}

@@ -48,3 +48,17 @@ All notable changes to this project will be documented in this file.
 - Validation for duplicate answers in multiple choice tests
 - Form error messages display
 - Answer count validation for different test types
+
+## [0.2.2] - 2025-01-26
+### Added
+- Question number cleaning functionality
+- Single answer validation for non-multiple choice tests
+
+### Changed
+- Translated all validation error messages to English
+- Improved error message display in form interface
+
+### Fixed
+- Validation for duplicate answers in multiple choice tests
+- Form error messages display
+- Answer count validation for different test types

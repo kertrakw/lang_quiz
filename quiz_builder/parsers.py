@@ -79,12 +79,15 @@ def clean_question_text(text):
     Returns:
         str: Tekst bez numeracji
     """
-    return re.sub(r'^\d+[.).]\s*', '', text.strip())
+    return re.sub(r'^\s*\d+[\s.).]+', '', text.strip())
 
 def parse_gap_test(content):
     """
     Parsuje test z lukami (zarówno jednolinijkowy jak i wielolinijkowy)
     """
+    # Najpierw usuwamy linię z odpowiedziami
+    content = re.sub(r'\[.*?\]$', '', content).strip()
+
     # Dzielimy na linijki
     lines = content.split('\n')
     questions = []
@@ -131,8 +134,8 @@ def parse_choice_test(content, test_type):
     # Usuwamy linię z odpowiedziami przed parsowaniem
     content = re.sub(r'\[.*?\]$', '', content).strip()
     
-    # Dzielimy na pytania (według numeracji lub pustych linii)
-    questions_raw = re.split(r'\n\s*\n|\n(?=\d+\.)', content.strip())
+    # Dzielimy na pytania (według pustych linii)
+    questions_raw = re.split(r'\n\s*\n', content.strip())
     questions = []
     
     for q_raw in questions_raw:
@@ -144,8 +147,6 @@ def parse_choice_test(content, test_type):
 
         # Usuwamy numerację z początku pytania
         question_text = clean_question_text(parts[0])
-
-        question_text = parts[0].strip()
         
         # Znajdujemy odpowiedzi
         choices = []
@@ -181,6 +182,9 @@ def parse_choice_test(content, test_type):
         
         # Tylko jeśli to CHOICE_WITH_GAPS, zmieniamy strukturę tekstu
         if test_type == 'CHOICE_WITH_GAPS':
+            # Najpierw usuńmy numerację z pytania
+            question_text = clean_question_text(question_text)
+            # Teraz przetwarzamy tekst na części
             parts = re.split(r'(_{3,})', question_text)
             question_data["text"] = [
                 {"content": part, "is_gap": bool(re.match(r'_{3,}', part))}
