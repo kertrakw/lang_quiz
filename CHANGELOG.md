@@ -62,3 +62,11 @@ All notable changes to this project will be documented in this file.
 - Validation for duplicate answers in multiple choice tests
 - Form error messages display
 - Answer count validation for different test types
+
+## [Unreleased]
+### Changed
+- Modified CHOICE_WITH_GAPS test display
+  - Replaced select with radio buttons for answer options
+  - Added placeholder (_______) in gap location
+  - Implemented selected answer display in gap
+  - Updated JavaScript to handle radio button selection

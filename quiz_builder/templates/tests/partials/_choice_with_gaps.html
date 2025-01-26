@@ -7,38 +7,33 @@
       <strong>{{ forloop.counter }}.</strong>
     </div>
 
-    <!-- Treść pytania z możliwością wielokrotnego wyboru -->
+    <!-- Treść pytania -->
     <div class="question-text mb-3">
-      {% for part in question.text %} {% if part.is_gap %}
-      <select
-        name="answer_{{ question.id }}"
-        class="form-select d-inline-block mx-1"
-        style="width: auto; min-width: 120px"
-        required
-      >
-        <option value="">Select...</option>
-        {% for choice in question.choices %}
-        <option value="{{ choice.letter }}">{{ choice.text }}</option>
-        {% endfor %}
-      </select>
-      {% else %} {{ part }} {% endif %} {% endfor %}
+      {% for part in question.text %}
+        {% if part.is_gap %}
+          <span class="gap-container">
+            <span class="gap-placeholder">_______</span>
+            <span class="selected-answer" style="display: none;"></span>
+          </span>
+        {% else %}
+          {{ part.content }}
+        {% endif %}
+      {% endfor %}
     </div>
 
-    <!-- Alternatywnie, można wyświetlić opcje jako listę pod pytaniem -->
+    <!-- Opcje odpowiedzi jako radio buttons -->
     <div class="options-container ps-4">
       {% for choice in question.choices %}
       <div class="form-check">
         <input
-          type="checkbox"
-          class="form-check-input"
-          name="answer_{{ question.id }}_multiple"
+          type="radio"
+          class="form-check-input answer-radio"
+          name="answer_{{ question.id }}"
           id="q{{ question.id }}_{{ choice.letter }}"
           value="{{ choice.letter }}"
+          data-text="{{ choice.text }}"
         />
-        <label
-          class="form-check-label"
-          for="q{{ question.id }}_{{ choice.letter }}"
-        >
+        <label class="form-check-label" for="q{{ question.id }}_{{ choice.letter }}">
           {{ choice.letter }}. {{ choice.text }}
         </label>
       </div>
@@ -52,36 +47,24 @@
   {% endfor %}
 </div>
 
-<!-- Dodajemy JavaScript do obsługi synchronizacji między select a checkboxami -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const questions = document.querySelectorAll(".question-container");
-
-    questions.forEach((question) => {
-      const select = question.querySelector("select");
-      const checkboxes = question.querySelectorAll('input[type="checkbox"]');
-
-      // Synchronizacja z selecta do checkboxów
-      select?.addEventListener("change", function () {
-        checkboxes.forEach((checkbox) => {
-          checkbox.checked = checkbox.value === this.value;
-        });
-      });
-
-      // Synchronizacja z checkboxów do selecta
-      checkboxes.forEach((checkbox) => {
-        checkbox.addEventListener("change", function () {
-          // Odznaczamy inne checkboxy
-          checkboxes.forEach((cb) => {
-            if (cb !== this) cb.checked = false;
-          });
-
-          // Ustawiamy wartość w selekcie
-          if (select) {
-            select.value = this.checked ? this.value : "";
-          }
-        });
-      });
+document.addEventListener("DOMContentLoaded", function () {
+  const radios = document.querySelectorAll('.answer-radio');
+  
+  radios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      const questionContainer = this.closest('.question-container');
+      const gapContainer = questionContainer.querySelector('.gap-container');
+      const selectedAnswer = gapContainer.querySelector('.selected-answer');
+      const gapPlaceholder = gapContainer.querySelector('.gap-placeholder');
+      
+      if (this.checked) {
+        selectedAnswer.textContent = this.dataset.text;
+        selectedAnswer.style.display = 'inline';
+        selectedAnswer.style.color = '#0d6efd'; // kolor dla wybranej odpowiedzi
+        gapPlaceholder.style.display = 'none';
+      }
     });
   });
+});
 </script>
