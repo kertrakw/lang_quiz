@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Versioning
+This project follows [Semantic Versioning](https://semver.org/):
+- MAJOR version (X.0.0) - incompatible API changes
+- MINOR version (0.X.0) - added functionality in a backward compatible manner
+- PATCH version (0.0.X) - backward compatible bug fixes
+
+## Release Schedule
+- PATCH releases - as needed for bug fixes
+- MINOR releases - every 2-3 weeks with new features
+- MAJOR releases - not planned until v1.0.0
+
 ## [0.1.0] - 2025-01-22
 ### Added
 - Basic test types (TEXT_INPUT_MEMORY, TEXT_INPUT_WORDLIST)
@@ -70,3 +81,14 @@ All notable changes to this project will be documented in this file.
   - Added placeholder (_______) in gap location
   - Implemented selected answer display in gap
   - Updated JavaScript to handle radio button selection
+
+  ## [Unreleased]
+### Changed
+- Updated test cases to match current test type implementations
+- Added comprehensive test coverage for all test formats
+- Extended parser tests with detailed structure validation
+
+## [Unreleased]
+### Added
+- Versioning schema documentation
+- Release schedule information
