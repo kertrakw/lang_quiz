@@ -82,13 +82,11 @@ This project follows [Semantic Versioning](https://semver.org/):
   - Implemented selected answer display in gap
   - Updated JavaScript to handle radio button selection
 
-  ## [Unreleased]
 ### Changed
 - Updated test cases to match current test type implementations
 - Added comprehensive test coverage for all test formats
 - Extended parser tests with detailed structure validation
 
-## [Unreleased]
 ### Added
 - Versioning schema documentation
 - Release schedule information

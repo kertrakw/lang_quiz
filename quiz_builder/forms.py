@@ -1,6 +1,7 @@
-from django import forms 
+from django import forms
 import re
 from django.core.exceptions import ValidationError
+
 
 # Formularz do tworzenia nowego testu - obsługuje różne typy testów i walidację danych
 class TestInputForm(forms.Form):
@@ -8,9 +9,10 @@ class TestInputForm(forms.Form):
     title = forms.CharField(
         max_length=200,
         label='Test title',  # Etykieta wyświetlana w formularzu
-        widget=forms.TextInput(attrs={'class': 'form-control'})  # Dodajemy klasę Bootstrap dla lepszego wyglądu
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+        # Dodajemy klasę Bootstrap dla lepszego wyglądu
     )
-    
+
     # Pole wyboru typu testu
     test_type = forms.ChoiceField(
         choices=[
@@ -34,7 +36,7 @@ class TestInputForm(forms.Form):
         label='Word list (only for "Fill in the gaps from wordlist" type)',
         help_text='Separate words with commas'
     )
-    
+
     # Pole na treść testu
     content = forms.CharField(
         widget=forms.Textarea(attrs={
@@ -48,14 +50,14 @@ class TestInputForm(forms.Form):
     def validate_answers(self, content, test_type):
         """
         Sprawdza poprawność odpowiedzi w nawiasach kwadratowych.
-        
+
         Args:
             content (str): Treść testu
             test_type (str): Typ testu
-        
+
         Returns:
             list: Lista poprawnych odpowiedzi lub None jeśli nie znaleziono
-        
+
         Raises:
             ValidationError: Gdy format odpowiedzi jest niepoprawny
         """
@@ -88,7 +90,7 @@ class TestInputForm(forms.Form):
             seen = set()
             print(f"Checking for duplicates in answers: {answers}")  # Debug
             for ans in answers:
-                
+
                 if not re.match(r'^[A-Da-d1-4]$', ans):
                     print(f"Invalid format for answer: {ans}")  # Debug
                     raise ValidationError(
@@ -103,10 +105,11 @@ class TestInputForm(forms.Form):
                         "Each answer in multiple choice test can be used only once."
                     )
                 seen.add(ans.upper())
-                print(f"Added to seen: {ans.upper()}, current seen: {seen}")  # Debug    
+                print(f"Added to seen: {ans.upper()}, current seen: {seen}")
+                # Debug
 
         return answers
-    
+
     def clean(self):
         """
         Walidacja formularza z uwzględnieniem struktury testu.
@@ -118,7 +121,7 @@ class TestInputForm(forms.Form):
 
         if not content:
             return cleaned_data
-        
+
         try:
             # Jednorazowa walidacja odpowiedzi
             answers = self.validate_answers(content, test_type)
@@ -135,7 +138,8 @@ class TestInputForm(forms.Form):
                 unused_words = words - {ans.strip() for ans in answers}
                 if unused_words:
                     raise ValidationError(
-                        f"Following words from the list are not used in the test: {', '.join(unused_words)}"
+                        f"Following words from the list are not used in the test: "
+                        f"{', '.join(unused_words)}"
                     )
 
             # Walidacja dla testów wyboru
@@ -144,16 +148,17 @@ class TestInputForm(forms.Form):
                 lines = [line.strip() for line in content.split('\n') if line.strip()]
                 options_found = False
                 available_options = set()
-                
+
                 for line in lines:
                     match = re.match(r'^([A-Da-d1-4])[.).]\s', line)
                     if match:
                         options_found = True
                         available_options.add(match.group(1).upper())
-                
+
                 if not options_found:
                     raise ValidationError(
-                        "Choice test must contain options marked as A., B., C., D. or 1., 2., 3., 4."
+                        "Choice test must contain options marked "
+                        "as A., B., C., D. or 1., 2., 3., 4."
                     )
 
                 # Sprawdzamy czy odpowiedzi odnoszą się do istniejących opcji
@@ -162,7 +167,7 @@ class TestInputForm(forms.Form):
                         raise ValidationError(
                             f"Answer {ans} refers to a non-existent option"
                         )
-                        
+
         except ValidationError as e:
             print(f"Validation error: {str(e)}")  # debug
             raise ValidationError(str(e))

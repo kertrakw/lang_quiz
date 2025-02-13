@@ -53,7 +53,8 @@ class Migration(migrations.Migration):
                     "word_list",
                     models.TextField(
                         blank=True,
-                        help_text="Available words for TEXT_INPUT_WORDLIST type. Separate words with commas.",
+                        help_text="Available words for TEXT_INPUT_WORDLIST type. "
+                        "Separate words with commas.",
                         null=True,
                     ),
                 ),
