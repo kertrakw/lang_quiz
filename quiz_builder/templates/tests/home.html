@@ -3,40 +3,36 @@
 {% block title %}Language Quiz Platform{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h1 class="mb-0">Welcome to Language Quiz Platform</h1>
-                </div>
-                <div class="card-body p-4 text-center">
-                    <p class="lead mb-4">Create and manage your language quizzes with ease</p>
-                    
-                    <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <a href="{% url 'create_test' %}" class="btn btn-primary btn-lg w-100">
-                                Create New Test
-                            </a>
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="box">
+                    <div class="has-text-centered">
+                        <h1 class="title">Welcome to Language Quiz Platform</h1>
+                        <p class="subtitle mb-4">Create and manage your language quizzes with ease</p>
+                        
+                        <div class="columns is-centered">
+                            <div class="column is-6">
+                                <a href="{% url 'create_test' %}" class="button is-primary is-large is-fullwidth">
+                                    Create New Test
+                                </a>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="mt-4">
-                        <h5 class="text-muted">Features:</h5>
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <div class="card h-100 border-0 shadow-sm">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Multiple Test Types</h6>
-                                        <p class="card-text">Create gap-filling, multiple choice, and word selection tests</p>
+                        <div class="mt-4">
+                            <h5 class="title is-5 has-text-grey">Features:</h5>
+                            <div class="columns mt-3">
+                                <div class="column is-6">
+                                    <div class="box">
+                                        <h6 class="title is-6">Multiple Test Types</h6>
+                                        <p>Create gap-filling, multiple choice, and word selection tests</p>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card h-100 border-0 shadow-sm">
-                                    <div class="card-body">
-                                        <h6 class="card-title">Easy Management</h6>
-                                        <p class="card-text">Preview and edit your tests with simple interface</p>
+                                <div class="column is-6">
+                                    <div class="box">
+                                        <h6 class="title is-6">Easy Management</h6>
+                                        <p>Preview and edit your tests with simple interface</p>
                                     </div>
                                 </div>
                             </div>
@@ -46,5 +42,5 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

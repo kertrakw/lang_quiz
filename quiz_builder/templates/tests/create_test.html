@@ -4,86 +4,99 @@
 {% block title %}Create New Test{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">Create New Test</h2>
-                </div>
-                <div class="card-body p-4">
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="box">
+                    <h2 class="title is-4">Create New Test</h2>
+                    
                     <form method="post">
                         {% csrf_token %}
 
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger mb-4">
+                            <div class="notification is-danger">
                                 <strong>Form errors:</strong>
                                 {{ form.non_field_errors }}
                             </div>
                         {% endif %}
                         
                         <!-- Tytuł testu -->
-                        <div class="mb-4">
-                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                        <div class="field">
+                            <label for="{{ form.title.id_for_label }}" class="label">
                                 {{ form.title.label }}
                             </label>
-                            {{ form.title }}
+                            <div class="control">
+                                {{ form.title }}
+                            </div>
                             {% if form.title.errors %}
-                                <div class="alert alert-danger mt-2">
+                                <p class="help is-danger">
                                     {{ form.title.errors }}
-                                </div>
+                                </p>
                             {% endif %}
                         </div>
 
                         <!-- Typ testu -->
-                        <div class="mb-4">
-                            <label for="{{ form.test_type.id_for_label }}" class="form-label fw-bold">
+                        <div class="field">
+                            <label for="{{ form.test_type.id_for_label }}" class="label">
                                 {{ form.test_type.label }}
                             </label>
-                            {{ form.test_type }}
-                            {% if form.test_type.errors %}
-                                <div class="alert alert-danger mt-2">
-                                    {{ form.test_type.errors }}
+                            <div class="control">
+                                <div class="select">
+                                    {{ form.test_type }}
                                 </div>
+                            </div>
+                            {% if form.test_type.errors %}
+                                <p class="help is-danger">
+                                    {{ form.test_type.errors }}
+                                </p>
                             {% endif %}
                         </div>
 
                         <!-- Lista słów -->
-                        <div class="mb-4" id="wordListContainer" style="display: none;">
-                            <label for="{{ form.word_list.id_for_label }}" class="form-label fw-bold">
+                        <div class="field" id="wordListContainer" style="display: none;">
+                            <label for="{{ form.word_list.id_for_label }}" class="label">
                                 {{ form.word_list.label }}
                             </label>
-                            {{ form.word_list }}
-                            <small class="form-text text-muted d-block mt-1">
+                            <div class="control">
+                                {{ form.word_list }}
+                            </div>
+                            <p class="help">
                                 {{ form.word_list.help_text }}
-                            </small>
+                            </p>
                             {% if form.word_list.errors %}
-                                <div class="alert alert-danger mt-2">
+                                <p class="help is-danger">
                                     {{ form.word_list.errors }}
-                                </div>
+                                </p>
                             {% endif %}
                         </div>
 
                         <!-- Treść testu -->
-                        <div class="mb-4">
-                            <label for="{{ form.content.id_for_label }}" class="form-label fw-bold">
+                        <div class="field">
+                            <label for="{{ form.content.id_for_label }}" class="label">
                                 {{ form.content.label }}
                             </label>
-                            {{ form.content }}
+                            <div class="control">
+                                {{ form.content }}
+                            </div>
                             {% if form.content.errors %}
-                                <div class="alert alert-danger mt-2">
+                                <p class="help is-danger">
                                     {{ form.content.errors }}
-                                </div>
+                                </p>
                             {% endif %}
                         </div>
 
-                        <button type="submit" class="btn btn-primary px-4">Create Test</button>
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Create Test</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <!-- JavaScript do obsługi pokazywania/ukrywania pola z listą słów -->
 <script>

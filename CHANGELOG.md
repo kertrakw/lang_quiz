@@ -74,7 +74,7 @@ This project follows [Semantic Versioning](https://semver.org/):
 - Form error messages display
 - Answer count validation for different test types
 
-## [Unreleased]
+## [0.2.3]
 ### Changed
 - Modified CHOICE_WITH_GAPS test display
   - Replaced select with radio buttons for answer options
@@ -90,3 +90,9 @@ This project follows [Semantic Versioning](https://semver.org/):
 ### Added
 - Versioning schema documentation
 - Release schedule information
+
+## [0.2.4] - 2025-02-18
+### Changed
+- Zmieniono framework CSS z Bootstrap 5 na Bulma 0.9.4
+- Zaktualizowano wszystkie szablony aby korzystały z klas Bulma
+- Usunięto zależność od Bootstrap JS

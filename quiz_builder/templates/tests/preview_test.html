@@ -5,15 +5,20 @@
 
 {% block content %}
 {{ parsed_content|json_script:"debug-data" }}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h2 class="mb-0">{{ title }}</h2>
-                    <span class="badge bg-light text-primary">{{ type }}</span>
-                </div>
-                <div class="card-body p-4">
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="box">
+                    <div class="level is-mobile">
+                        <div class="level-left">
+                            <h2 class="title is-4 mb-0">{{ title }}</h2>
+                        </div>
+                        <div class="level-right">
+                            <span class="tag is-primary is-medium">{{ type }}</span>
+                        </div>
+                    </div>
+                    
                     <form method="post" action="{% url 'check_test' %}" id="testForm">
                         {% csrf_token %}
                         
@@ -25,32 +30,35 @@
                             {% include 'tests/partials/_choice_with_gaps.html' %}
                         {% endif %}
 
-                        <div class="mt-4 d-flex justify-content-between">
-                            <a href="{% url 'create_test' %}" class="btn btn-secondary">Back to Editor</a>
-                            <button type="submit" class="btn btn-primary">Check Answers</button>
+                        <div class="level mt-4">
+                            <div class="level-left">
+                                <a href="{% url 'create_test' %}" class="button">Back to Editor</a>
+                            </div>
+                            <div class="level-right">
+                                <button type="submit" class="button is-primary">Check Answers</button>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <!-- Modal dla wyświetlania wyników -->
-<div class="modal fade" id="resultsModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Test Results</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="resultsContent">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="showAnswers">Show Correct Answers</button>
-            </div>
-        </div>
+<div class="modal" id="resultsModal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Test Results</p>
+            <button class="delete" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body" id="resultsContent">
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button" id="closeModal">Close</button>
+            <button class="button is-primary" id="showAnswers">Show Correct Answers</button>
+        </footer>
     </div>
 </div>
 {% endblock %}
@@ -59,8 +67,17 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const testForm = document.getElementById('testForm');
-    const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+    const modal = document.getElementById('resultsModal');
     const resultsContent = document.getElementById('resultsContent');
+    const closeButton = document.querySelector('.delete');
+    const closeModalButton = document.getElementById('closeModal');
+    
+    function closeModal() {
+        modal.classList.remove('is-active');
+    }
+
+    closeButton.addEventListener('click', closeModal);
+    closeModalButton.addEventListener('click', closeModal);
     
     testForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -80,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(results => {
             // Wyświetlamy wyniki
             displayResults(results);
-            resultsModal.show();
+            modal.classList.add('is-active');
         })
         .catch(error => {
             console.error('Error:', error);
@@ -91,9 +108,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayResults(results) {
         const percentage = results.percentage.toFixed(1);
         let html = `
-            <div class="text-center mb-4">
-                <h3>Your Score: ${percentage}%</h3>
-                <p>${results.correct} correct out of ${results.total} questions</p>
+            <div class="has-text-centered mb-4">
+                <h3 class="title is-3">${percentage}%</h3>
+                <p class="subtitle">${results.correct} correct out of ${results.total} questions</p>
             </div>
         `;
         
@@ -110,12 +127,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result) {
                 input.value = result.correct;
                 input.classList.add(
-                    result.is_correct ? 'is-valid' : 'is-invalid'
+                    result.is_correct ? 'is-success' : 'is-danger'
                 );
             }
         });
         
-        resultsModal.hide();
+        closeModal();
     });
 });
 </script>

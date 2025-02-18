@@ -1,7 +1,7 @@
 <!-- templates/tests/partials/_choice_with_gaps.html -->
 <div class="test-content">
   {% for question in parsed_content %}
-  <div class="question-container mb-4">
+  <div class="question-container block mb-4">
     <!-- Numer pytania -->
     <div class="question-number mb-2">
       <strong>{{ forloop.counter }}.</strong>
@@ -22,18 +22,18 @@
     </div>
 
     <!-- Opcje odpowiedzi jako radio buttons -->
-    <div class="options-container ps-4">
+    <div class="options-container pl-4">
       {% for choice in question.choices %}
-      <div class="form-check">
+      <div class="field">
         <input
           type="radio"
-          class="form-check-input answer-radio"
+          class="radio answer-radio"
           name="answer_{{ question.id }}"
           id="q{{ question.id }}_{{ choice.letter }}"
           value="{{ choice.letter }}"
           data-text="{{ choice.text }}"
         />
-        <label class="form-check-label" for="q{{ question.id }}_{{ choice.letter }}">
+        <label class="label" for="q{{ question.id }}_{{ choice.letter }}">
           {{ choice.letter }}. {{ choice.text }}
         </label>
       </div>
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (this.checked) {
         selectedAnswer.textContent = this.dataset.text;
         selectedAnswer.style.display = 'inline';
-        selectedAnswer.style.color = '#0d6efd'; // kolor dla wybranej odpowiedzi
+        selectedAnswer.style.color = '#485fc7'; // kolor primary Bulmy
         gapPlaceholder.style.display = 'none';
       }
     });

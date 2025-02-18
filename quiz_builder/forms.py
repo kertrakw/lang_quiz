@@ -9,8 +9,8 @@ class TestInputForm(forms.Form):
     title = forms.CharField(
         max_length=200,
         label='Test title',  # Etykieta wyświetlana w formularzu
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-        # Dodajemy klasę Bootstrap dla lepszego wyglądu
+        widget=forms.TextInput(attrs={'class': 'input'})
+        # Zmieniamy form-control na input dla Bulma
     )
 
     # Pole wyboru typu testu
@@ -23,13 +23,13 @@ class TestInputForm(forms.Form):
             ('CHOICE_WITH_GAPS', 'Choice test with gaps')
         ],
         label='Test type',
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'select'})
     )
 
     word_list = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'class': 'form-control',
+            'class': 'textarea',
             'rows': 3,
             'placeholder': 'Enter words separated by commas (e.g.: at, in, on)'
         }),
@@ -40,7 +40,7 @@ class TestInputForm(forms.Form):
     # Pole na treść testu
     content = forms.CharField(
         widget=forms.Textarea(attrs={
-            'class': 'form-control',
+            'class': 'textarea',
             'rows': 10,  # Wysokość pola tekstowego
             'placeholder': 'Paste your test content here...'  # Tekst podpowiedzi
         }),

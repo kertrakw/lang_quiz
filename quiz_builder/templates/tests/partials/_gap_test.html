@@ -1,10 +1,10 @@
 <!-- templates/tests/partials/_gap_test.html -->
 {% if word_list %}
-<div class="mb-4">
-    <h5>Available words:</h5>
-    <div class="d-flex flex-wrap gap-2">
+<div class="block mb-4">
+    <h5 class="title is-5">Available words:</h5>
+    <div class="is-flex is-flex-wrap-wrap">
         {% for word in word_list %}
-            <span class="badge bg-secondary px-3 py-2">{{ word }}</span>
+            <span class="tag is-medium is-info mr-2 mb-2">{{ word }}</span>
         {% endfor %}
     </div>
 </div>
@@ -17,7 +17,7 @@
                 {% if part.gap %}
                     <input type="text" 
                            name="answer_{{ part.id }}" 
-                           class="form-control d-inline-block mx-1" 
+                           class="input is-inline-block mx-1" 
                            style="width: 120px;"
                            {% if word_list %}list="word-list"{% endif %}
                            required>

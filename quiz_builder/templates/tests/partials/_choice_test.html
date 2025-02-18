@@ -1,7 +1,7 @@
 <!-- templates/tests/partials/_choice_test.html -->
 <div class="test-content">
     {% for question in parsed_content %}
-        <div class="question-container mb-4">
+        <div class="question-container block mb-4">
             <!-- Numer pytania -->
             <div class="question-number mb-2">
                 <strong>{{ forloop.counter }}.</strong>
@@ -13,21 +13,22 @@
             </div>
             
             <!-- Opcje odpowiedzi -->
-            <div class="options-container ps-4">
+            <div class="options-container pl-4">
                 {% for choice in question.choices %}
-                    <div class="form-check mb-2">
+                    <div class="field mb-2">
                         <input 
                             {% if question.multiple_answers %}
                                 type="checkbox"
+                                class="checkbox"
                             {% else %}
                                 type="radio"
+                                class="radio"
                             {% endif %}
-                            class="form-check-input" 
                             name="answer_{{ question.id }}" 
                             id="q{{ question.id }}_{{ choice.letter }}" 
                             value="{{ choice.letter }}"
                             {% if not question.multiple_answers %}required{% endif %}>
-                        <label class="form-check-label" for="q{{ question.id }}_{{ choice.letter }}">
+                        <label class="label" for="q{{ question.id }}_{{ choice.letter }}">
                             {{ choice.letter }}. {{ choice.text }}
                         </label>
                     </div>
