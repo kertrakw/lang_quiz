@@ -1,10 +1,6 @@
-// Kolory
-$primary: #485fc7;
-
-// Zmienne formularzy
-$input-border-color: #dbdbdb;
-$input-hover-border-color: #b5b5b5;
-$input-focus-border-color: $primary;
-
-// Inne zmienne projektu
+// Własne zmienne
 $custom-gap: 1rem;
+
+// Nadpisanie zmiennych Bulmy
+$primary: #004742;
+$family-sans-serif: BlinkMacSystemFont, -apple-system, "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;

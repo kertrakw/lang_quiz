@@ -1,29 +1,9 @@
-// Własne zmienne
-@import "variables";
+// Zmienne
+@use 'variables' as *;
 
-// Nadpisanie zmiennych Bulmy
-@import "overrides";
+@forward "../../../node_modules/bulma/bulma.scss";
 
-// Import potrzebnych komponentów Bulmy
-// @import './bulma/bulma.scss';
-@import "bulma/sass/utilities/_index.scss";
-@import "bulma/sass/base/_index.scss";
-@import "bulma/sass/elements/_index.scss";
-// @import "bulma/sass/elements/button.scss";
-// @import "bulma/sass/elements/container.scss";
-// @import "bulma/sass/elements/title.scss";
-// @import "bulma/sass/elements/notification.scss";
-// @import "bulma/sass/elements/box.scss";
-@import "bulma/sass/form/_index.scss";
-@import "bulma/sass/components/_index.scss";
-@import "bulma/sass/grid/_index.scss";
-
-// @import "bulma/sass/components/navbar.scss";
-// @import "bulma/sass/components/level.scss";
-// @import "bulma/sass/components/modal.scss";
-// @import "bulma/sass/grid/columns.scss";
-@import "bulma/sass/helpers/_index.scss";
-
-// Własne komponenty
-@import "components/forms";
-@import "components/tests";
+// Nasze nadpisania i komponenty
+@use 'overrides' as *;
+@use "components/forms" as *;
+@use "components/tests" as *;

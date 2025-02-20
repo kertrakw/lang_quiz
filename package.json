@@ -6,6 +6,8 @@
     "doc": "docs"
   },
   "scripts": {
+    "sass": "sass quiz_builder/static/scss/main.scss:quiz_builder/static/css/main.css",
+    "sass:watch": "sass --watch quiz_builder/static/scss/main.scss:quiz_builder/static/css/main.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +24,8 @@
   "description": "",
   "dependencies": {
     "bulma": "^1.0.3"
+  },
+  "devDependencies": {
+    "sass": "^1.85.0"
   }
 }

@@ -1,2 +1,14 @@
-// Nadpisanie zmiennych Bulmy
-// Tu możemy nadpisać domyślne zmienne Bulmy
+@use 'variables' as *;
+// Tutaj możemy nadpisać style Bulmy
+.field {
+    margin-bottom: $custom-gap;
+  }
+  
+  // Możemy też dodać własne modyfikatory dla klas Bulmy
+  .button {
+    &.is-fullwidth-mobile {
+      @media screen and (max-width: 768px) {
+        width: 100%;
+      }
+    }
+  }
