@@ -96,3 +96,9 @@ This project follows [Semantic Versioning](https://semver.org/):
 - Zmieniono framework CSS z Bootstrap 5 na Bulma 0.9.4
 - Zaktualizowano wszystkie szablony aby korzystały z klas Bulma
 - Usunięto zależność od Bootstrap JS
+
+## [0.2.5] - 2025-02-19
+### Changed
+- Zmieniono sposób dostarczania Bulmy z CDN na npm
+- Dodano kompilację SCSS przez Dart Sass
+- Skonfigurowano strukturę plików SCSS
