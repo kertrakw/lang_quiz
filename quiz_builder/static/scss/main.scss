@@ -1,9 +1,70 @@
 // Zmienne
 @use 'variables' as *;
 
-@forward "../../../node_modules/bulma/bulma.scss";
-
 // Nasze nadpisania i komponenty
 @use 'overrides' as *;
 @use "components/forms" as *;
 @use "components/tests" as *;
+
+// Path to Bulma's sass folder
+@use "../../../node_modules/bulma/sass/utilities" with (
+  $family-primary: '"Nunito", sans-serif',
+  $grey-dark: $brown,
+  $grey-light: $beige-light,
+  $primary: $darkgreen,
+  $link: $darkgreen,
+  $control-border-width: 2px
+);
+
+// Override Sass variables from the /form folder
+@use "../../../node_modules/bulma/sass/form" with (
+  $input-shadow: none
+);
+@use "../../../node_modules/bulma/sass/elements/title" with (
+  $title-color: $darkgreen
+);
+@use "../../../node_modules/bulma/sass/elements/button" with (
+    $button-text-color: $white
+);
+
+@forward "../../../node_modules/bulma/sass/base";
+
+// Layout
+@forward "../../../node_modules/bulma/sass/grid/columns";
+@forward "../../../node_modules/bulma/sass/layout/section";
+@forward "../../../node_modules/bulma/sass/layout/level";
+@forward "../../../node_modules/bulma/sass/layout/container";
+@forward "../../../node_modules/bulma/sass/layout/level";
+
+// Elementy
+@forward "../../../node_modules/bulma/sass/elements/box";
+@forward "../../../node_modules/bulma/sass/elements/content";
+
+@forward "../../../node_modules/bulma/sass/elements/notification";
+@forward "../../../node_modules/bulma/sass/elements/tag";
+@forward "../../../node_modules/bulma/sass/elements/delete";
+
+// Formularze
+// @forward "../../../node_modules/bulma/sass/form/shared";
+// @forward "../../../node_modules/bulma/sass/form/input-textarea";
+// @forward "../../../node_modules/bulma/sass/form/select";
+// @forward "../../../node_modules/bulma/sass/form/checkbox-radio";
+// @forward "../../../node_modules/bulma/sass/form/tools";
+
+// Komponenty
+@forward "../../../node_modules/bulma/sass/components/modal";
+
+
+// Helpery
+@forward "../../../node_modules/bulma/sass/helpers/typography";
+@forward "../../../node_modules/bulma/sass/helpers/spacing";
+@forward "../../../node_modules/bulma/sass/helpers/color";
+@forward "../../../node_modules/bulma/sass/helpers/flexbox";
+
+// Import the themes so that all CSS variables have a value
+@forward "../../../node_modules/bulma/sass/themes";
+
+
+// Import the Google Font
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
+
