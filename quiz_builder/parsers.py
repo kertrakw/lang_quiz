@@ -41,37 +41,6 @@ def standardize_choice_marker(text):
     return None, text
 
 
-def detect_test_type(content):
-    """
-    Wykrywa typ testu na podstawie jego zawartości
-    """
-    # Jeśli znajdziemy listę słów na początku (np. "AT - IN - ON")
-    has_word_list = bool(re.match(r'^[A-Z\s,\-–]+$', content.split('\n')[0]))
-
-    # Jeśli znajdziemy "A.", "B.", "C." - to jest test wyboru
-    has_choices = bool(re.search(r'\n[A-D]\.', content))
-
-    # Jeśli znajdziemy lukę (_____) - to jest test z lukami
-    has_gaps = bool(re.findall(r'_{3,}', content))
-
-    # Jeśli znajdziemy odpowiedzi z wieloma opcjami [A,C]
-    has_multiple_answers = bool(re.search(r'\[(.*?,.*?)\]', content))
-
-    if has_word_list and has_gaps:
-        return 'TEXT_INPUT_WORDLIST'
-    elif has_gaps and not has_choices:
-        return 'TEXT_INPUT_MEMORY'
-    elif has_choices:
-        if has_multiple_answers:
-            return 'MULTIPLE_CHOICE'
-        elif has_gaps:
-            return 'CHOICE_WITH_GAPS'
-        else:
-            return 'SINGLE_CHOICE'
-
-    return None
-
-
 def clean_question_text(text):
     """
     Usuwa numerację z początku pytania.
@@ -104,20 +73,24 @@ def parse_gap_test(content):
         line = clean_question_text(line)
 
         # Znajdujemy wszystkie luki w linii
-        parts = re.split(r'(_{3,})', line)
+        parts = re.split(r'\[ _ \]', line)
 
         current_question = []
         for i, part in enumerate(parts):
-            if re.match(r'_{3,}', part):  # Jeśli to luka
+            if i == len(parts) - 1:  # ostatnia część
+                current_question.append({
+                    "text": part,
+                    "gap": False
+                })
+            else:  # po każdej części (oprócz ostatniej) powinna być luka
+                current_question.append({
+                    "text": part,
+                    "gap": False
+                })
                 current_question.append({
                     "text": "",
                     "gap": True,
                     "id": len(questions) + 1
-                })
-            else:
-                current_question.append({
-                    "text": part,
-                    "gap": False
                 })
 
         questions.append(current_question)
@@ -191,9 +164,9 @@ def parse_choice_test(content, test_type):
             # Najpierw usuńmy numerację z pytania
             question_text = clean_question_text(question_text)
             # Teraz przetwarzamy tekst na części
-            parts = re.split(r'(_{3,})', question_text)
+            parts = re.split(r'\[ _ \]', question_text)
             question_data["text"] = [
-                {"content": part, "is_gap": bool(re.match(r'_{3,}', part))}
+                {"content": part, "is_gap": bool(re.match(r'\[ _ \]', part))}
                 for part in parts
             ]
             question_data["has_gap"] = True

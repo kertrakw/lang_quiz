@@ -1,104 +1,123 @@
 # Changelog
-All notable changes to this project will be documented in this file.
+Wszystkie istotne zmiany w projekcie będą dokumentowane w tym pliku.
 
-## Versioning
-This project follows [Semantic Versioning](https://semver.org/):
-- MAJOR version (X.0.0) - incompatible API changes
-- MINOR version (0.X.0) - added functionality in a backward compatible manner
-- PATCH version (0.0.X) - backward compatible bug fixes
+## Wersjonowanie
+Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
+- Wersja GŁÓWNA (X.0.0) - niekompatybilne zmiany API
+- Wersja POMNIEJSZA (0.X.0) - dodanie funkcjonalności z zachowaniem kompatybilności wstecznej
+- Wersja ŁATKA (0.0.X) - poprawki błędów z zachowaniem kompatybilności wstecznej
 
-## Release Schedule
-- PATCH releases - as needed for bug fixes
-- MINOR releases - every 2-3 weeks with new features
-- MAJOR releases - not planned until v1.0.0
+## Harmonogram wydań
+- Wydania ŁATEK - w miarę potrzeb dla poprawek błędów
+- Wydania POMNIEJSZE - co 2-3 tygodnie z nowymi funkcjami
+- Wydania GŁÓWNE - nieplanowane do wersji 1.0.0
 
 ## [0.1.0] - 2025-01-22
-### Added
-- Basic test types (TEXT_INPUT_MEMORY, TEXT_INPUT_WORDLIST)
-- Test parser for different formats
-- Test creation form
-- Test preview functionality
+### Dodano
+- Podstawowe typy testów (TEXT_INPUT_MEMORY, TEXT_INPUT_WORDLIST)
+- Parser testów dla różnych formatów
+- Formularz tworzenia testów
+- Funkcjonalność podglądu testów
 
-### Changed
-- Updated test type detection logic
-- Improved form validation
+### Zmieniono
+- Zaktualizowano logikę wykrywania typu testu
+- Ulepszono walidację formularza
 
-### Fixed
-- Parser handling of multiline tests
-- Form display issues with word list field
+### Naprawiono
+- Obsługę testów wielolinijkowych w parserze
+- Problemy z wyświetlaniem pola listy słów w formularzu
 
-## [Unreleased]
-### Planned
-- Test saving functionality
-- Tag system
-- User authentication
-- API endpoints
+## [Nierozpocząte]
+### Planowane
+- Funkcjonalność zapisywania testów
+- System tagów
+- Uwierzytelnianie użytkowników
+- Endpointy API
 
 ## [0.2.0] - 2025-01-24
-### Added
+### Dodano
 - Obsługa różnych formatów oznaczeń odpowiedzi (a), A., 1), -)
 - Automatyczna konwersja formatów na standardowy (A., B., C., D.)
 
-### Changed
+### Zmieniono
 - Poprawiono obsługę testu typu MULTIPLE_CHOICE
 - Zmieniono sposób wykrywania typu testu w preview (użycie typu z sesji)
 
-### Fixed
+### Naprawiono
 - Naprawiono wyświetlanie właściwych kontrolek dla MULTIPLE_CHOICE (checkboxy zamiast radio buttons)
 
 ## [0.2.1] - 2025-01-25
-### Added
-- Single answer validation for non-multiple choice tests
-- Detailed validation feedback for answers
+### Dodano
+- Walidacja pojedynczej odpowiedzi dla testów jednokrotnego wyboru
+- Szczegółowe komunikaty walidacji dla odpowiedzi
 
-### Changed
-- Translated all validation error messages to English
-- Improved error message display in form interface
+### Zmieniono
+- Przetłumaczono wszystkie komunikaty błędów na angielski
+- Ulepszono wyświetlanie komunikatów błędów w interfejsie formularza
 
-### Fixed
-- Validation for duplicate answers in multiple choice tests
-- Form error messages display
-- Answer count validation for different test types
+### Naprawiono
+- Walidację duplikatów odpowiedzi w testach wielokrotnego wyboru
+- Wyświetlanie komunikatów błędów formularza
+- Walidację liczby odpowiedzi dla różnych typów testów
 
 ## [0.2.2] - 2025-01-26
-### Added
-- Question number cleaning functionality
-- Single answer validation for non-multiple choice tests
+### Dodano
+- Funkcjonalność czyszczenia numeracji pytań
+- Walidacja pojedynczej odpowiedzi dla testów jednokrotnego wyboru
 
-### Changed
-- Translated all validation error messages to English
-- Improved error message display in form interface
+### Zmieniono
+- Przetłumaczono wszystkie komunikaty błędów na angielski
+- Ulepszono wyświetlanie komunikatów błędów w interfejsie formularza
 
-### Fixed
-- Validation for duplicate answers in multiple choice tests
-- Form error messages display
-- Answer count validation for different test types
+### Naprawiono
+- Walidację duplikatów odpowiedzi w testach wielokrotnego wyboru
+- Wyświetlanie komunikatów błędów formularza
+- Walidację liczby odpowiedzi dla różnych typów testów
 
 ## [0.2.3]
-### Changed
-- Modified CHOICE_WITH_GAPS test display
-  - Replaced select with radio buttons for answer options
-  - Added placeholder (_______) in gap location
-  - Implemented selected answer display in gap
-  - Updated JavaScript to handle radio button selection
+### Zmieniono
+- Zmodyfikowano wyświetlanie testu CHOICE_WITH_GAPS
+  - Zamieniono select na radio buttons dla opcji odpowiedzi
+  - Dodano placeholder (_______) w miejscu luki
+  - Zaimplementowano wyświetlanie wybranej odpowiedzi w luce
+  - Zaktualizowano JavaScript do obsługi wyboru radio button
 
-### Changed
-- Updated test cases to match current test type implementations
-- Added comprehensive test coverage for all test formats
-- Extended parser tests with detailed structure validation
+### Zmieniono
+- Zaktualizowano przypadki testowe do aktualnych implementacji typów testów
+- Dodano kompleksowe pokrycie testami dla wszystkich formatów testów
+- Rozszerzono testy parsera o szczegółową walidację struktury
 
-### Added
-- Versioning schema documentation
-- Release schedule information
+### Dodano
+- Dokumentację schematu wersjonowania
+- Informacje o harmonogramie wydań
 
 ## [0.2.4] - 2025-02-18
-### Changed
+### Zmieniono
 - Zmieniono framework CSS z Bootstrap 5 na Bulma 0.9.4
 - Zaktualizowano wszystkie szablony aby korzystały z klas Bulma
 - Usunięto zależność od Bootstrap JS
 
 ## [0.2.5] - 2025-02-19
-### Changed
+### Zmieniono
 - Zmieniono sposób dostarczania Bulmy z CDN na npm
 - Dodano kompilację SCSS przez Dart Sass
 - Skonfigurowano strukturę plików SCSS
+
+## [0.2.6] - 2024-02-23
+
+### Zmieniono
+- Ujednolicono format luk w testach do [ _ ]
+- Poprawiono parsowanie testów z lukami
+- Zaktualizowano przykładowe testy do nowego formatu
+
+### Usunięto
+- Usunięto funkcję detect_test_type (przeniesiona do planów rozwojowych)
+
+### Naprawiono
+- Poprawiono logikę w parse_gap_test dla właściwego wykrywania luk
+- Naprawiono numerację luk w sparsowanych testach
+
+### Dokumentacja
+- Dodano docs/TODO.md z planami rozwojowymi
+- Zaktualizowano dokumentację formatów testów
+- Dodano szczegółowe przykłady użycia nowego formatu luk
