@@ -134,7 +134,7 @@ class TestInputForm(forms.Form):
                         "Word list is required for 'Fill in the gaps from wordlist' type"
                     )
                 # Sprawdzamy czy wszystkie słowa z word_list są użyte w odpowiedziach
-                words = {w.strip() for w in word_list.split(',')}
+                words = {w.strip() for w in word_list.split(' - ')}
                 unused_words = words - {ans.strip() for ans in answers}
                 if unused_words:
                     raise ValidationError(

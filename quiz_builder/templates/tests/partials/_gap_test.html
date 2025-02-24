@@ -15,12 +15,22 @@
         <div class="test-line mb-3">
             {% for part in line %}
                 {% if part.gap %}
-                    <input type="text" 
-                           name="answer_{{ part.id }}" 
-                           class="input is-inline-block mx-1" 
-                           style="width: 120px;"
-                           {% if word_list %}list="word-list"{% endif %}
-                           required>
+                    {% if word_list %}
+                        <div class="select is-inline-block mx-1" style="width: 120px;">
+                            <select name="answer_{{ part.id }}" required>
+                                <option value="" disabled selected>Select...</option>
+                                {% for word in word_list %}
+                                    <option value="{{ word }}">{{ word }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% else %}
+                        <input type="text" 
+                               name="answer_{{ part.id }}" 
+                               class="input is-inline-block mx-1" 
+                               style="width: 120px;"
+                               required>
+                    {% endif %}
                 {% else %}
                     {{ part.text }}
                 {% endif %}
@@ -28,11 +38,3 @@
         </div>
     {% endfor %}
 </div>
-
-{% if word_list %}
-<datalist id="word-list">
-    {% for word in word_list %}
-        <option value="{{ word }}">
-    {% endfor %}
-</datalist>
-{% endif %}

@@ -23,11 +23,11 @@
                         {% csrf_token %}
                         
                         {% if type == 'TEXT_INPUT_MEMORY' or type == 'TEXT_INPUT_WORDLIST' %}
-                            {% include 'tests/partials/_gap_test.html' %}
+                            {% include "tests/partials/_gap_test.html" with questions=parsed_content word_list=word_list %}
                         {% elif type == 'SINGLE_CHOICE' or type == 'MULTIPLE_CHOICE' %}
-                            {% include 'tests/partials/_choice_test.html' %}
+                            {% include "tests/partials/_choice_test.html" with questions=parsed_content type=type %}
                         {% elif type == 'CHOICE_WITH_GAPS' %}
-                            {% include 'tests/partials/_choice_with_gaps.html' %}
+                            {% include "tests/partials/_choice_with_gaps.html" with questions=parsed_content %}
                         {% endif %}
 
                         <div class="level mt-4">

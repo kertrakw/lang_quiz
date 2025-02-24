@@ -42,7 +42,8 @@ class TestPreviewView(TemplateView):
         context.update({
             'title': test_data['title'],
             'type': test_type,  # używamy typu z sesji
-            'parsed_content': parsed_content
+            'parsed_content': parsed_content,
+            'word_list': test_data.get('word_list', [])  # Dodajemy word_list do kontekstu
         })
         print("Context:", context)  # Debug
         return context
@@ -131,7 +132,7 @@ class TestCreateView(FormView):
             'title': cleaned_data['title'],
             'type': test_type,
             'content': content,
-            'word_list': cleaned_data.get('word_list', '').split(','),
+            'word_list': cleaned_data.get('word_list', '').split(' - '),
             'answers': answers_dict
         }
 

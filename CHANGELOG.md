@@ -121,3 +121,11 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Dodano docs/TODO.md z planami rozwojowymi
 - Zaktualizowano dokumentację formatów testów
 - Dodano szczegółowe przykłady użycia nowego formatu luk
+
+## [0.2.7] - [DZISIEJSZA DATA]
+
+### Zmieniono
+- Zmieniono separator słów na liście (w testach typu TEXT_INPUT_WORDLIST) z ',' na ' - '
+- Zastąpiono element datalist elementem select w testach typu TEXT_INPUT_WORDLIST
+- Poprawiono interfejs wyboru słów dla bardziej intuicyjnego doświadczenia użytkownika
+- Rozwiązano problem z filtrowaniem opcji po wyborze w listach rozwijanych
