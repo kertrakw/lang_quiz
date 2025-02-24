@@ -1,7 +1,10 @@
 from django import forms
 import re
 from django.core.exceptions import ValidationError
+import logging
 
+
+logger = logging.getLogger('quiz_builder.views')
 
 # Formularz do tworzenia nowego testu - obsługuje różne typy testów i walidację danych
 class TestInputForm(forms.Form):
@@ -88,25 +91,24 @@ class TestInputForm(forms.Form):
             # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
             # oraz czy nie ma duplikatów
             seen = set()
-            print(f"Checking for duplicates in answers: {answers}")  # Debug
+            logger.debug("Checking for duplicates in answers: %s", answers)
             for ans in answers:
 
                 if not re.match(r'^[A-Da-d1-4]$', ans):
-                    print(f"Invalid format for answer: {ans}")  # Debug
+                    logger.error("Invalid format for answer: %s", ans)
                     raise ValidationError(
                         f"Invalid answer format: {ans}. "
                         "For multiple choice tests use A-D or 1-4"
                     )
                 if ans.upper() in seen:
-                    print(f"Duplicate answer found: {ans}")  # Debug
-                    print(f"Current seen answers: {seen}")  # Debug
+                    logger.error("Duplicate answer found: %s", ans)
+                    logger.debug("Current seen answers: %s", seen)
                     raise ValidationError(
                         f"Answer '{ans}' has already been used. "
                         "Each answer in multiple choice test can be used only once."
                     )
                 seen.add(ans.upper())
-                print(f"Added to seen: {ans.upper()}, current seen: {seen}")
-                # Debug
+                logger.debug("Added to seen: %s, current seen: %s", ans.upper(), seen)
 
         return answers
 
@@ -169,7 +171,7 @@ class TestInputForm(forms.Form):
                         )
 
         except ValidationError as e:
-            print(f"Validation error: {str(e)}")  # debug
+            logger.error("Validation error: %s", str(e))
             raise ValidationError(str(e))
 
         return cleaned_data

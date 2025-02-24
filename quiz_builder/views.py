@@ -7,9 +7,12 @@ from django.http import JsonResponse
 # from django.core.exceptions import ValidationError
 from .forms import TestInputForm
 # import re
+import logging
 
 from .parsers import parse_gap_test, parse_choice_test
 
+
+logger = logging.getLogger('quiz_builder.views')
 
 # Widok strony głównej - wyświetla podstawowy interfejs do tworzenia testów
 class HomeView(TemplateView):
@@ -30,13 +33,13 @@ class TestPreviewView(TemplateView):
         test_type = test_data['type']  # bierzemy typ z sesji
 
         # Parsujemy w zależności od wykrytego typu
-        print("===== Test type from session:", test_type)
+        logger.debug("===== Test type from session: %s", test_type)
         if test_type in ['TEXT_INPUT_MEMORY', 'TEXT_INPUT_WORDLIST']:
             parsed_content = parse_gap_test(content)
         elif test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
             parsed_content = parse_choice_test(content, test_type)
 
-        print("Parsed content:", parsed_content)
+        logger.debug("Parsed content: %s", parsed_content)
 
         context = super().get_context_data(**kwargs)
         context.update({
@@ -45,7 +48,7 @@ class TestPreviewView(TemplateView):
             'parsed_content': parsed_content,
             'word_list': test_data.get('word_list', [])  # Dodajemy word_list do kontekstu
         })
-        print("Context:", context)  # Debug
+        logger.debug("Context: %s", context)
         return context
 
 
@@ -117,15 +120,14 @@ class TestCreateView(FormView):
         test_type = cleaned_data['test_type']
         answers = cleaned_data.get('answers', [])
 
-        # Debug
-        print("=== Form validation passed ===")
-        print("Content:", content)
-        print("Type:", test_type)
-        print("Answers:", answers)
+        logger.info("=== Form validation passed ===")
+        logger.debug("Content: %s", content)
+        logger.debug("Type: %s", test_type)
+        logger.debug("Answers: %s", answers)
 
         # Konwertujemy odpowiedzi na słownik dla TestCheckView
         answers_dict = {str(i+1): ans for i, ans in enumerate(answers)}
-        print("Answers dict:", answers_dict)  # Debug
+        logger.debug("Answers dict: %s", answers_dict)
 
         # Przygotowujemy dane do sesji
         self.request.session['test_data'] = {
@@ -139,5 +141,5 @@ class TestCreateView(FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Form errors:", form.errors)  # debug
+        logger.error("Form errors: %s", form.errors)
         return super().form_invalid(form)

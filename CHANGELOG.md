@@ -103,7 +103,7 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Dodano kompilację SCSS przez Dart Sass
 - Skonfigurowano strukturę plików SCSS
 
-## [0.2.6] - 2024-02-23
+## [0.2.6] - 2025-02-23
 
 ### Zmieniono
 - Ujednolicono format luk w testach do [ _ ]
@@ -122,10 +122,21 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Zaktualizowano dokumentację formatów testów
 - Dodano szczegółowe przykłady użycia nowego formatu luk
 
-## [0.2.7] - [DZISIEJSZA DATA]
+## [0.2.7] - [2025-02-24]
 
 ### Zmieniono
 - Zmieniono separator słów na liście (w testach typu TEXT_INPUT_WORDLIST) z ',' na ' - '
 - Zastąpiono element datalist elementem select w testach typu TEXT_INPUT_WORDLIST
 - Poprawiono interfejs wyboru słów dla bardziej intuicyjnego doświadczenia użytkownika
 - Rozwiązano problem z filtrowaniem opcji po wyborze w listach rozwijanych
+
+## [0.2.7] - [2025-02-24]
+
+### Dodano
+- Zaimplementowano system logowania dla lepszego debugowania aplikacji
+- Dodano konfigurację logowania w settings.py z zapisem do pliku i konsoli
+- Zastąpiono instrukcje print wywołaniami loggera o odpowiednich poziomach
+
+### Zmieniono
+- Dostosowano obsługę komunikatów błędów dla zwiększenia przejrzystości logów
+- Ujednolicono format komunikatów diagnostycznych
