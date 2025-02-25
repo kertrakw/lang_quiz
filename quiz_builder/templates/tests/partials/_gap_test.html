@@ -1,5 +1,5 @@
 <!-- templates/tests/partials/_gap_test.html -->
-{% if word_list %}
+{% if type == 'TEXT_INPUT_WORDLIST' and word_list %}
 <div class="block mb-4">
     <h5 class="title is-5">Available words:</h5>
     <div class="is-flex is-flex-wrap-wrap">
@@ -15,7 +15,7 @@
         <div class="test-line mb-3">
             {% for part in line %}
                 {% if part.gap %}
-                    {% if word_list %}
+                    {% if type == 'TEXT_INPUT_WORDLIST' and word_list %}
                         <div class="select is-inline-block mx-1" style="width: 120px;">
                             <select name="answer_{{ part.id }}" required>
                                 <option value="" disabled selected>Select...</option>

@@ -129,17 +129,14 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Zastąpiono element datalist elementem select w testach typu TEXT_INPUT_WORDLIST
 - Poprawiono interfejs wyboru słów dla bardziej intuicyjnego doświadczenia użytkownika
 - Rozwiązano problem z filtrowaniem opcji po wyborze w listach rozwijanych
-
-## [0.2.7] - [2025-02-24]
+- Dostosowano obsługę komunikatów błędów dla zwiększenia przejrzystości logów
+- Ujednolicono format komunikatów diagnostycznych
 
 ### Dodano
 - Zaimplementowano system logowania dla lepszego debugowania aplikacji
 - Dodano konfigurację logowania w settings.py z zapisem do pliku i konsoli
 - Zastąpiono instrukcje print wywołaniami loggera o odpowiednich poziomach
 
-### Zmieniono
-- Dostosowano obsługę komunikatów błędów dla zwiększenia przejrzystości logów
-- Ujednolicono format komunikatów diagnostycznych
 
 ## [0.2.8] - [2025-02-25]
 
@@ -147,3 +144,6 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Problem wrażliwości na wielkość liter w testach z listą słów
 - Ustandaryzowano obsługę słów dla spójnej walidacji niezależnie od wielkości liter
 - Zaimplementowano konwersję do małych liter przy porównywaniu słów w szablonach i widokach
+- Naprawiono błąd wyświetlania testów typu TEXT_INPUT_MEMORY, które nieprawidłowo pokazywały pustą listę słów i pola select zamiast pól input
+- Dodano sprawdzanie typu testu w szablonie _gap_test.html, aby zapewnić właściwe renderowanie różnych typów testów
+
