@@ -20,7 +20,7 @@
                             <select name="answer_{{ part.id }}" required>
                                 <option value="" disabled selected>Select...</option>
                                 {% for word in word_list %}
-                                    <option value="{{ word }}">{{ word }}</option>
+                                    <option value="{{ word|lower }}">{{ word }}</option>
                                 {% endfor %}
                             </select>
                         </div>

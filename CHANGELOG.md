@@ -140,3 +140,10 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 ### Zmieniono
 - Dostosowano obsługę komunikatów błędów dla zwiększenia przejrzystości logów
 - Ujednolicono format komunikatów diagnostycznych
+
+## [0.2.8] - [2025-02-25]
+
+### Naprawiono
+- Problem wrażliwości na wielkość liter w testach z listą słów
+- Ustandaryzowano obsługę słów dla spójnej walidacji niezależnie od wielkości liter
+- Zaimplementowano konwersję do małych liter przy porównywaniu słów w szablonach i widokach

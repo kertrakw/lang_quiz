@@ -134,8 +134,8 @@ class TestCreateView(FormView):
             'title': cleaned_data['title'],
             'type': test_type,
             'content': content,
-            'word_list': cleaned_data.get('word_list', '').split(' - '),
-            'answers': answers_dict
+            'word_list': [word.strip().lower() for word in cleaned_data.get('word_list', '').split(' - ')],
+            'answers': {k: v.lower() for k, v in answers_dict.items()}
         }
 
         return super().form_valid(form)
