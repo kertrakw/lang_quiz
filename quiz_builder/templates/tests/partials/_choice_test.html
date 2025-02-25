@@ -3,34 +3,37 @@
     {% for question in parsed_content %}
         <div class="question-container block mb-4">
             <!-- Numer pytania -->
-            <div class="question-number mb-2">
-                <strong>{{ forloop.counter }}.</strong>
+            <div class="is-flex mb-3">
+                <div class="question-number mr-2">
+                    <strong>{{ forloop.counter }}.</strong>
+                </div>
+                
+                <!-- Treść pytania -->
+                <div class="question-text">
+                    {{ question.text|linebreaks }}
+                </div>
             </div>
-            
-            <!-- Treść pytania -->
-            <div class="question-text mb-3">
-                {{ question.text|linebreaks }}
-            </div>
-            
             <!-- Opcje odpowiedzi -->
             <div class="options-container pl-4">
                 {% for choice in question.choices %}
                     <div class="field mb-2">
-                        <input 
-                            {% if question.multiple_answers %}
-                                type="checkbox"
-                                class="checkbox"
-                            {% else %}
-                                type="radio"
-                                class="radio"
-                            {% endif %}
-                            name="answer_{{ question.id }}" 
-                            id="q{{ question.id }}_{{ choice.letter }}" 
-                            value="{{ choice.letter }}"
-                            {% if not question.multiple_answers %}required{% endif %}>
-                        <label class="label" for="q{{ question.id }}_{{ choice.letter }}">
-                            {{ choice.letter }}. {{ choice.text }}
-                        </label>
+                        <div class="control is-flex is-align-items-center">
+                            <input 
+                                {% if question.multiple_answers %}
+                                    type="checkbox"
+                                    class="checkbox mr-2"
+                                {% else %}
+                                    type="radio"
+                                    class="radio mr-2"
+                                {% endif %}
+                                name="answer_{{ question.id }}" 
+                                id="q{{ question.id }}_{{ choice.letter }}" 
+                                value="{{ choice.letter }}"
+                                {% if not question.multiple_answers %}required{% endif %}>
+                            <label class="ml-2" for="q{{ question.id }}_{{ choice.letter }}">
+                                {{ choice.letter }}. {{ choice.text }}
+                            </label>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

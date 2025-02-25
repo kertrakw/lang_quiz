@@ -146,4 +146,9 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Zaimplementowano konwersję do małych liter przy porównywaniu słów w szablonach i widokach
 - Naprawiono błąd wyświetlania testów typu TEXT_INPUT_MEMORY, które nieprawidłowo pokazywały pustą listę słów i pola select zamiast pól input
 - Dodano sprawdzanie typu testu w szablonie _gap_test.html, aby zapewnić właściwe renderowanie różnych typów testów
+- Poprawiono układ interfejsu testów wyboru
+- Numer pytania i treść pytania są teraz wyświetlane w jednej linii
+- Opcje odpowiedzi są wyświetlane obok przycisków radio/checkbox zamiast pod nimi
+- Naprawiono brakujące narzędzia flexbox z Bulma, dodając helper visibility
+- Zwiększono czytelność testów typu wyboru
 

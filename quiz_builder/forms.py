@@ -71,44 +71,22 @@ class TestInputForm(forms.Form):
 
         answers = [ans.strip() for ans in answer_match.group(1).split(',')]
 
-        # Walidacja w zależności od typu testu
-        if test_type in ['SINGLE_CHOICE', 'CHOICE_WITH_GAPS']:
-
-            # Sprawdzamy czy jest dokładnie jedna odpowiedź
-            if len(answers) > 1:
-                raise ValidationError(
-                    "This type of test must have exactly one answer. "
-                    f"Found {len(answers)} answers: [{', '.join(answers)}]"
-                )
-            # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
-            for ans in answers:
-                if not re.match(r'^[A-Da-d1-4]$', ans):
-                    raise ValidationError(
-                        f"Invalid answer format: {ans}. "
-                        "For single choice tests use A-D or 1-4"
-                    )
-        elif test_type == 'MULTIPLE_CHOICE':
-            # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
-            # oraz czy nie ma duplikatów
-            seen = set()
-            logger.debug("Checking for duplicates in answers: %s", answers)
-            for ans in answers:
-
-                if not re.match(r'^[A-Da-d1-4]$', ans):
-                    logger.error("Invalid format for answer: %s", ans)
-                    raise ValidationError(
-                        f"Invalid answer format: {ans}. "
-                        "For multiple choice tests use A-D or 1-4"
-                    )
-                if ans.upper() in seen:
-                    logger.error("Duplicate answer found: %s", ans)
-                    logger.debug("Current seen answers: %s", seen)
-                    raise ValidationError(
-                        f"Answer '{ans}' has already been used. "
-                        "Each answer in multiple choice test can be used only once."
-                    )
-                seen.add(ans.upper())
-                logger.debug("Added to seen: %s, current seen: %s", ans.upper(), seen)
+        # Liczymy pytania w teście (dzielimy według wzorca numeracji lub pustych linii)
+        questions_count = 0
+        
+        if test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
+            # Sprawdzamy, ile jest pytań z numeracją (1., 2., itd.)
+            questions_count = len(re.findall(r'^\d+\.', content, re.MULTILINE))
+        else:
+            # Dla testów typu TEXT_INPUT, liczymy luki [ _ ]
+            questions_count = len(re.findall(r'\[ _ \]', content))
+        
+        # Sprawdzamy, czy liczba odpowiedzi zgadza się z liczbą pytań
+        if questions_count != len(answers):
+            raise ValidationError(
+                f"Number of answers ({len(answers)}) does not match number of questions ({questions_count}). "
+                f"Each question should have exactly one answer."
+            )
 
         return answers
 

@@ -112,8 +112,13 @@ def parse_choice_test(content, test_type):
     # Usuwamy linię z odpowiedziami przed parsowaniem
     content = re.sub(r'\[.*?\]$', '', content).strip()
 
-    # Dzielimy na pytania (według pustych linii)
-    questions_raw = re.split(r'\n\s*\n', content.strip())
+    # Dzielimy według wzorca numeracji pytań (np. "1.", "2.")
+    questions_raw = re.split(r'\n(?=\d+\.)', content.strip())
+
+    # Jeśli otrzymaliśmy tylko jeden element, spróbujmy podzielić według pustych linii
+    if len(questions_raw) <= 1:
+        questions_raw = re.split(r'\n\s*\n', content.strip())
+
     questions = []
 
     for q_raw in questions_raw:
