@@ -60,10 +60,15 @@ class TestCheckView(View):
             return JsonResponse({'error': 'No test data found'}, status=400)
 
         # Pobieramy przesłane odpowiedzi
-        answers = {
-            key: value for key, value in request.POST.items()
-            if key.startswith('answer_')
-        }
+        answers = {}
+        for key, value in request.POST.items():
+            if key.startswith('answer_'):
+                # Dla MULTIPLE_CHOICE pobieramy wszystkie zaznaczone wartości
+                if test_data['type'] == 'MULTIPLE_CHOICE':
+                    values = request.POST.getlist(key)
+                    answers[key] = values
+                else:
+                    answers[key] = value
 
         # Sprawdzamy odpowiedzi
         results = self.check_answers(test_data, answers)
@@ -75,8 +80,9 @@ class TestCheckView(View):
         Sprawdza poprawność odpowiedzi.
         Zwraca słownik z wynikami dla każdej odpowiedzi.
         """
-        correct_answers = test_data.get('answers', [])
-        # Tu trzeba będzie dodać odpowiedzi do test_data
+        test_type = test_data.get('type', '')
+        correct_answers = test_data.get('answers', {})
+        
         results = {
             'total': len(correct_answers),
             'correct': 0,
@@ -86,19 +92,43 @@ class TestCheckView(View):
         # Sprawdzamy każdą odpowiedź
         for q_id, correct in correct_answers.items():
             answer_key = f'answer_{q_id}'
-            submitted = submitted_answers.get(answer_key, '').strip().lower()
-            is_correct = submitted == correct.lower()
-
-            results['answers'][q_id] = {
-                'submitted': submitted,
-                'correct': correct,
-                'is_correct': is_correct
-            }
+            submitted = submitted_answers.get(answer_key, '')
+            
+            # Obsługa różnych typów testów
+            if test_type == 'MULTIPLE_CHOICE':
+                # Konwertuj prawidłowe odpowiedzi na listę, jeśli są oddzielone spacjami
+                correct_list = correct.split() if isinstance(correct, str) else correct
+                correct_list = [ans.upper() for ans in correct_list]
+                
+                # Pobierz odpowiedzi użytkownika jako listę
+                submitted_list = submitted if isinstance(submitted, list) else [submitted]
+                submitted_list = [ans.upper() for ans in submitted_list if ans.strip()]
+                
+                # Sprawdź czy zbiory odpowiedzi są identyczne
+                is_correct = set(submitted_list) == set(correct_list)
+                
+                results['answers'][q_id] = {
+                    'submitted': submitted_list,
+                    'correct': correct_list,
+                    'is_correct': is_correct
+                }
+            else:
+                # Konwertujemy do jednolitego formatu (wielkie litery, usunięcie spacji)
+                correct_norm = correct.upper().strip() if isinstance(correct, str) else ''
+                submitted_norm = submitted.upper().strip() if isinstance(submitted, str) else ''
+                
+                is_correct = submitted_norm == correct_norm
+                
+                results['answers'][q_id] = {
+                    'submitted': submitted,
+                    'correct': correct,
+                    'is_correct': is_correct
+                }
 
             if is_correct:
                 results['correct'] += 1
 
-        results['percentage'] = (results['correct'] / results['total']) * 100
+        results['percentage'] = (results['correct'] / results['total']) * 100 if results['total'] > 0 else 0
 
         return results
 

@@ -158,5 +158,9 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Zaktualizowano system sprawdzania odpowiedzi dla testów wielokrotnego wyboru
 - Poprawiono obsługę formularzy z wielokrotnym wyborem (checkboxy)
 - Zapewniono spójną obsługę wielkości liter w odpowiedziach
+- Naprawiono obsługę testów wielokrotnego wyboru (MULTIPLE_CHOICE) w systemie sprawdzania
+- Dodano wsparcie dla wielu zaznaczonych wartości (checkboxy) w widoku sprawdzania
+- Poprawiono porównywanie odpowiedzi w testach wielokrotnego wyboru
+- Ulepszono normalizację formatu odpowiedzi (wielkość liter, białe znaki)
 
 
