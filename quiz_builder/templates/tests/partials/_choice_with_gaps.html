@@ -2,40 +2,44 @@
 <div class="test-content">
   {% for question in parsed_content %}
   <div class="question-container block mb-4">
+    <div class="is-flex mb-3">
     <!-- Numer pytania -->
-    <div class="question-number mb-2">
-      <strong>{{ forloop.counter }}.</strong>
-    </div>
+      <div class="question-number mr-2">
+        <strong>{{ forloop.counter }}.</strong>
+      </div>
 
-    <!-- Treść pytania -->
-    <div class="question-text mb-3">
-      {% for part in question.text %}
-        {% if part.is_gap %}
-          <span class="gap-container">
-            <span class="gap-placeholder">_______</span>
-            <span class="selected-answer" style="display: none;"></span>
-          </span>
-        {% else %}
-          {{ part.content }}
-        {% endif %}
-      {% endfor %}
+      <!-- Treść pytania -->
+      <div class="question-text">
+        {% for part in question.text %}
+          {% if part.is_gap %}
+            <span class="gap-container">
+              <span class="gap-placeholder">_______</span>
+              <span class="selected-answer" style="display: none;"></span>
+            </span>
+          {% else %}
+            {{ part.content }}
+          {% endif %}
+        {% endfor %}
+      </div>
     </div>
 
     <!-- Opcje odpowiedzi jako radio buttons -->
     <div class="options-container pl-4">
       {% for choice in question.choices %}
       <div class="field">
-        <input
-          type="radio"
-          class="radio answer-radio"
-          name="answer_{{ question.id }}"
-          id="q{{ question.id }}_{{ choice.letter }}"
-          value="{{ choice.letter }}"
-          data-text="{{ choice.text }}"
-        />
-        <label class="label" for="q{{ question.id }}_{{ choice.letter }}">
-          {{ choice.letter }}. {{ choice.text }}
-        </label>
+        <div class="control is-flex is-align-items-center">
+          <input
+            type="radio"
+            class="radio answer-radio mr-2"
+            name="answer_{{ question.id }}"
+            id="q{{ question.id }}_{{ choice.letter }}"
+            value="{{ choice.letter }}"
+            data-text="{{ choice.text }}"
+          />
+          <label class="ml-2" for="q{{ question.id }}_{{ choice.letter }}">
+            {{ choice.letter }}. {{ choice.text }}
+          </label>
+        </div>
       </div>
       {% endfor %}
     </div>

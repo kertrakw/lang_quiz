@@ -168,12 +168,22 @@ def parse_choice_test(content, test_type):
         if test_type == 'CHOICE_WITH_GAPS':
             # Najpierw usuńmy numerację z pytania
             question_text = clean_question_text(question_text)
-            # Teraz przetwarzamy tekst na części
-            parts = re.split(r'\[ _ \]', question_text)
-            question_data["text"] = [
-                {"content": part, "is_gap": bool(re.match(r'\[ _ \]', part))}
-                for part in parts
-            ]
+            
+            # Znajdź wszystkie luki w tekście
+            gap_pattern = r'\[ _ \]'
+            
+            # Tworzymy listę części tekstu, naprzemiennie tekst i luka
+            parts = []
+            segments = re.split(f'({gap_pattern})', question_text)
+            
+            for i, segment in enumerate(segments):
+                is_gap = segment == '[ _ ]'
+                parts.append({
+                    "content": segment if not is_gap else "",
+                    "is_gap": is_gap
+                })
+            
+            question_data["text"] = parts
             question_data["has_gap"] = True
 
         questions.append(question_data)

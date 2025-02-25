@@ -151,4 +151,7 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Opcje odpowiedzi są wyświetlane obok przycisków radio/checkbox zamiast pod nimi
 - Naprawiono brakujące narzędzia flexbox z Bulma, dodając helper visibility
 - Zwiększono czytelność testów typu wyboru
+- Naprawiono problem z wykrywaniem luk w testach typu CHOICE_WITH_GAPS
+- Zmodyfikowano regex do dzielenia tekstu, aby zachować informację o lukach
+- Poprawiono renderowanie placeholderów luk w szablonie
 
