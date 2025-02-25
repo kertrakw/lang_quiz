@@ -163,4 +163,11 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Poprawiono porównywanie odpowiedzi w testach wielokrotnego wyboru
 - Ulepszono normalizację formatu odpowiedzi (wielkość liter, białe znaki)
 
+### Dodano
+- Przycisk "Example Test" obok przycisku tworzenia testu
+- Modal z przykładami dla wszystkich typów testów
+- Dynamiczne wyświetlanie przykładu w zależności od wybranego typu testu
+- Style CSS zapewniające poprawne zawijanie tekstu w przykładach
+
+
 

@@ -9,11 +9,14 @@
 // Path to Bulma's sass folder
 @use "../../../node_modules/bulma/sass/utilities" with (
   $family-primary: '"Nunito", sans-serif',
-  $grey-dark: $brown,
-  $grey-light: $beige-light,
-  $primary: $darkgreen,
-  $link: $darkgreen,
-  $control-border-width: 2px
+  $control-border-width: 2px,
+  $text:#231f1a,
+  $link:#22430a,
+  $primary:#a3d810,
+  $info:#33630f,
+  $success:#4e750d,
+  $warning:#fec504,
+  $danger:#f70152,
 );
 
 // Override Sass variables from the /form folder
@@ -21,7 +24,7 @@
   $input-shadow: none
 );
 @use "../../../node_modules/bulma/sass/elements/title" with (
-  $title-color: $darkgreen
+  $title-color: $primary
 );
 @use "../../../node_modules/bulma/sass/elements/button" with (
     $button-text-color: $white
@@ -56,11 +59,7 @@
 
 
 // Helpery
-@forward "../../../node_modules/bulma/sass/helpers/typography";
-@forward "../../../node_modules/bulma/sass/helpers/spacing";
-@forward "../../../node_modules/bulma/sass/helpers/color";
-@forward "../../../node_modules/bulma/sass/helpers/flexbox";
-@forward "../../../node_modules/bulma/sass/helpers/visibility";
+@forward "../../../node_modules/bulma/sass/helpers/";
 
 // Import the themes so that all CSS variables have a value
 @forward "../../../node_modules/bulma/sass/themes";

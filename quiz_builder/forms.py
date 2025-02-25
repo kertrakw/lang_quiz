@@ -34,10 +34,10 @@ class TestInputForm(forms.Form):
         widget=forms.Textarea(attrs={
             'class': 'textarea',
             'rows': 3,
-            'placeholder': 'Enter words separated by commas (e.g.: at, in, on)'
+            'placeholder': 'Enter words separated by hyphen (e.g.: at - in - on)'
         }),
         label='Word list (only for "Fill in the gaps from wordlist" type)',
-        help_text='Separate words with commas'
+        help_text='Separate words with space hyphen space'
     )
 
     # Pole na treść testu

@@ -88,6 +88,7 @@
 
                         <div class="field">
                             <div class="control">
+                                <button type="button" class="button is-info ml-2" id="showExampleBtn">Example Test</button>
                                 <button type="submit" class="button is-primary">Create Test</button>
                             </div>
                         </div>
@@ -98,22 +99,183 @@
     </div>
 </section>
 
-<!-- JavaScript do obsługi pokazywania/ukrywania pola z listą słów -->
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const testTypeSelect = document.querySelector('#{{ form.test_type.id_for_label }}');
-    const wordListContainer = document.querySelector('#wordListContainer');
-
-    function toggleWordList() {
-        if (testTypeSelect.value === 'TEXT_INPUT_WORDLIST') {
-            wordListContainer.style.display = 'block';
-        } else {
-            wordListContainer.style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+        const testTypeSelect = document.querySelector('#{{ form.test_type.id_for_label }}');
+        const wordListContainer = document.querySelector('#wordListContainer');
+        const exampleModal = document.querySelector('#exampleModal');
+        const showExampleBtn = document.querySelector('#showExampleBtn');
+        const closeExampleBtn = document.querySelector('#closeExampleBtn');
+        const modalBackground = document.querySelector('.modal-background');
+        const exampleContents = document.querySelectorAll('.example-content');
+    
+        // Funkcja pokazywania/ukrywania pola z listą słów
+        function toggleWordList() {
+            if (testTypeSelect.value === 'TEXT_INPUT_WORDLIST') {
+                wordListContainer.style.display = 'block';
+            } else {
+                wordListContainer.style.display = 'none';
+            }
         }
-    }
+    
+        // Funkcja pokazująca przykład dla wybranego typu testu
+        function showExampleForSelectedType() {
+            // Ukryj wszystkie przykłady
+            exampleContents.forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Pokaż przykład dla wybranego typu
+            const selectedType = testTypeSelect.value;
+            const selectedExample = document.querySelector(`#${selectedType}_example`);
+            if (selectedExample) {
+                selectedExample.style.display = 'block';
+            }
+        }
+    
+        // Funkcja zamykania modalu
+        function closeModal() {
+            exampleModal.classList.remove('is-active');
+        }
+    
+        // Dodanie event listenerów
+        testTypeSelect.addEventListener('change', toggleWordList);
+        
+        if (showExampleBtn) {
+            showExampleBtn.addEventListener('click', function() {
+                exampleModal.classList.add('is-active');
+                showExampleForSelectedType();
+            });
+        }
+        
+        if (closeExampleBtn) {
+            closeExampleBtn.addEventListener('click', closeModal);
+        }
+        
+        if (modalBackground) {
+            modalBackground.addEventListener('click', closeModal);
+        }
+    
+        // Aktualizacja przykładu przy zmianie typu testu
+        testTypeSelect.addEventListener('change', function() {
+            if (exampleModal && exampleModal.classList.contains('is-active')) {
+                showExampleForSelectedType();
+            }
+        });
+    
+        // Wykonaj początkowe ustawienie wyświetlania pola word_list
+        toggleWordList();
+    });
 
-    testTypeSelect.addEventListener('change', toggleWordList);
-    toggleWordList();
-});
 </script>
+
+<!-- Modal z przykładami testów -->
+<div class="modal" id="exampleModal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Example Test Format</p>
+            <button class="delete" aria-label="close" id="closeExampleBtn"></button>
+        </header>
+        <section class="modal-card-body">
+            <div id="TEXT_INPUT_MEMORY_example" class="example-content">
+                <h4 class="title is-5">Fill in the gaps from memory</h4>
+                <pre>1. You need to submit your application [ _ ] advance.
+2. The train arrived exactly [ _ ] time at 3 PM.
+3. Will we finish the project [ _ ] time for the presentation?
+4. Most of the staff are [ _ ] leave during August.
+[in,on,in,on]</pre>
+            </div>
+            
+            <div id="TEXT_INPUT_WORDLIST_example" class="example-content">
+                <h4 class="title is-5">Fill in the gaps from wordlist</h4>
+                <pre>at - in - on
+
+1. [ _ ] what time does the meeting start tomorrow? 
+2. I last saw him [ _ ] his birthday. 
+3. Don't go out [ _ ] noon. The sun is too strong. 
+4. You should start feeling better [ _ ] a day or two. 
+5. We're going [ _ ] holiday next month. 
+[at,on,at,in,on]</pre>
+            </div>
+            
+            <div id="SINGLE_CHOICE_example" class="example-content">
+                <h4 class="title is-5">Single choice test</h4>
+                <pre>1. Which tense is used to describe your daily routine?
+a. Present Simple
+b. Present Continuous
+c. Past Simple
+d. Future Simple
+2. What is NOT a countable noun?
+a. book
+b. water
+c. pencil
+d. table
+3. What type of word is "quickly"?
+a. adjective
+b. verb
+c. adverb
+d. preposition
+4. The sentence "She has been living here for 10 years" is in:
+a. Present Perfect
+b. Present Perfect Continuous
+c. Past Perfect
+d. Past Perfect Continuous
+[a, b, c, b]</pre>
+            </div>
+            
+            <div id="MULTIPLE_CHOICE_example" class="example-content">
+                <h4 class="title is-5">Multiple choice test</h4>
+                <pre>1. Which of these words can be followed by the suffix "-less"? (Choose all that apply)
+a. hope
+b. care
+c. friend
+d. wonder
+2. What emotions might you feel on your first day at a new job? (Choose all that apply)
+a. excited
+b. nervous
+c. exhausted
+d. hungry
+3. Which of these phrasal verbs can mean "to stop"? (Choose 2 correct answers)
+a. give up
+b. break down
+c. break off
+d. give in
+4. When forming questions in Present Perfect, which elements are necessary? (Choose all that apply)
+a. have/has
+b. past participle
+c. did
+d. subject
+[a b c d, a b, a c, a b d]</pre>
+            </div>
+            
+            <div id="CHOICE_WITH_GAPS_example" class="example-content">
+                <h4 class="title is-5">Choice test with gaps</h4>
+                <pre>1. Have you read the list of [ _ ] that are in this food product?
+a. recipes
+b. ingredients
+c. makings
+d. elements
+2. The Internet can be used as a [ _ ] of getting a lot of information in a short time.
+a. process
+b. kind
+c. means
+d. measure
+3. Up to now scientists have not been able to find a [ _ ] for the disease.
+a. preserve
+b. healing
+c. therapy
+d. cure
+4. The average [ _ ] of electricity per household has increased dramatically over the years.
+a. comsume
+b. comsuming
+c. consumption
+d. consumerism
+[b, c, d, c]</pre>
+            </div>
+        </section>
+    </div>
+</div>
+
 {% endblock %}

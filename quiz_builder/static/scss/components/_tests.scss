@@ -3,3 +3,26 @@
 .test-content {
     margin-top: $custom-gap;
   }
+
+// Style dla modalu z przykładami testów
+.example-content {
+  display: none;
+}
+
+.modal-card-body {
+  pre {
+    background-color: #f5f5f5;
+    padding: 1em;
+    border-radius: 4px;
+    white-space: pre-wrap;        // Zawijanie tekstu
+    word-wrap: break-word;        // Łamanie długich słów
+    overflow-wrap: break-word;    // Alternatywna właściwość
+    max-width: 100%;              // Ograniczenie szerokości
+    overflow-x: hidden;           // Ukrycie poziomego paska przewijania
+  }
+}
+
+// Dodatkowe klasy pomocnicze
+.ml-2 {
+  margin-left: 0.5rem;
+}
