@@ -69,26 +69,57 @@ class TestInputForm(forms.Form):
         if not answer_match:
             raise ValidationError("No answers found in square brackets at the end of the test")
 
-        answers = [ans.strip() for ans in answer_match.group(1).split(',')]
-
-        # Liczymy pytania w teście (dzielimy według wzorca numeracji lub pustych linii)
-        questions_count = 0
+        # Rozdzielamy odpowiedzi dla poszczególnych pytań
+        raw_answers = answer_match.group(1).strip()
+        answer_groups = [ans.strip() for ans in raw_answers.split(',')]
         
-        if test_type in ['SINGLE_CHOICE', 'MULTIPLE_CHOICE', 'CHOICE_WITH_GAPS']:
-            # Sprawdzamy, ile jest pytań z numeracją (1., 2., itd.)
-            questions_count = len(re.findall(r'^\d+\.', content, re.MULTILINE))
-        else:
-            # Dla testów typu TEXT_INPUT, liczymy luki [ _ ]
-            questions_count = len(re.findall(r'\[ _ \]', content))
+        # Walidacja w zależności od typu testu
+        if test_type in ['SINGLE_CHOICE', 'CHOICE_WITH_GAPS']:
+            # Sprawdzamy odpowiedzi dla każdego pytania
+            for i, ans_group in enumerate(answer_groups):
+                # Sprawdzamy czy jest dokładnie jedna odpowiedź
+                if ' ' in ans_group:
+                    raise ValidationError(
+                        f"For question {i+1}: This type of test must have exactly one answer. "
+                        f"Found multiple answers: {ans_group}"
+                    )
+                # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
+                if not re.match(r'^[A-Da-d1-4]$', ans_group):
+                    raise ValidationError(
+                        f"For question {i+1}: Invalid answer format: {ans_group}. "
+                        "For single choice tests use A-D or 1-4"
+                    )
         
-        # Sprawdzamy, czy liczba odpowiedzi zgadza się z liczbą pytań
-        if questions_count != len(answers):
-            raise ValidationError(
-                f"Number of answers ({len(answers)}) does not match number of questions ({questions_count}). "
-                f"Each question should have exactly one answer."
-            )
+        elif test_type == 'MULTIPLE_CHOICE':
+            # Sprawdzamy odpowiedzi dla każdego pytania
+            for i, ans_group in enumerate(answer_groups):
+                # Dzielimy odpowiedzi dla tego pytania według spacji
+                answers = ans_group.split()
+                
+                # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
+                # oraz czy nie ma duplikatów
+                seen = set()
+                logger.debug(f"Checking for duplicates in answers for question {i+1}: {answers}")
+                
+                for ans in answers:
+                    if not re.match(r'^[A-Da-d1-4]$', ans):
+                        logger.error(f"Invalid format for answer: {ans}")
+                        raise ValidationError(
+                            f"For question {i+1}: Invalid answer format: {ans}. "
+                            "For multiple choice tests use A-D or 1-4"
+                        )
+                    
+                    if ans.upper() in seen:
+                        logger.error(f"Duplicate answer found: {ans}")
+                        logger.debug(f"Current seen answers: {seen}")
+                        raise ValidationError(
+                            f"For question {i+1}: Answer '{ans}' has already been used. "
+                            "Each answer in multiple choice test can be used only once."
+                        )
+                    seen.add(ans.upper())
+                    logger.debug(f"Added to seen: {ans.upper()}, current seen: {seen}")
 
-        return answers
+        return answer_groups
 
     def clean(self):
         """
@@ -104,8 +135,8 @@ class TestInputForm(forms.Form):
 
         try:
             # Jednorazowa walidacja odpowiedzi
-            answers = self.validate_answers(content, test_type)
-            cleaned_data['answers'] = answers
+            answer_groups = self.validate_answers(content, test_type)
+            cleaned_data['answers'] = answer_groups
 
             # Walidacja dla testu z listą słów
             if test_type == 'TEXT_INPUT_WORDLIST':
@@ -115,7 +146,16 @@ class TestInputForm(forms.Form):
                     )
                 # Sprawdzamy czy wszystkie słowa z word_list są użyte w odpowiedziach
                 words = {w.strip() for w in word_list.split(' - ')}
-                unused_words = words - {ans.strip() for ans in answers}
+                
+                # Spłaszczamy odpowiedzi do jednej listy
+                all_answers = []
+                for ans_group in answer_groups:
+                    if ' ' in ans_group:  # jeśli mamy format z odpowiedziami oddzielonymi spacjami
+                        all_answers.extend(ans_group.split())
+                    else:
+                        all_answers.append(ans_group)
+                
+                unused_words = words - {ans.strip() for ans in all_answers}
                 if unused_words:
                     raise ValidationError(
                         f"Following words from the list are not used in the test: "
@@ -142,11 +182,21 @@ class TestInputForm(forms.Form):
                     )
 
                 # Sprawdzamy czy odpowiedzi odnoszą się do istniejących opcji
-                for ans in answers:
-                    if ans.upper() not in available_options:
-                        raise ValidationError(
-                            f"Answer {ans} refers to a non-existent option"
-                        )
+                for ans_group in answer_groups:
+                    if test_type == 'MULTIPLE_CHOICE':
+                        # Dzielimy odpowiedzi według spacji dla MULTIPLE_CHOICE
+                        answers = ans_group.split()
+                        for ans in answers:
+                            if ans.upper() not in available_options:
+                                raise ValidationError(
+                                    f"Answer {ans} refers to a non-existent option"
+                                )
+                    else:
+                        # Pojedyncza odpowiedź dla innych typów
+                        if ans_group.upper() not in available_options:
+                            raise ValidationError(
+                                f"Answer {ans_group} refers to a non-existent option"
+                            )
 
         except ValidationError as e:
             logger.error("Validation error: %s", str(e))

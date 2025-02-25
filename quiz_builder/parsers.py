@@ -109,19 +109,29 @@ def parse_choice_test(content, test_type):
     Returns:
         list: Lista pytań z odpowiedziami
     """
-    # Usuwamy linię z odpowiedziami przed parsowaniem
+    # Znajdujemy odpowiedzi w nawiasach kwadratowych na końcu
+    answer_match = re.search(r'\[(.*?)\]$', content.strip())
+    answers = []
+    if answer_match:
+        # Pobieramy odpowiedzi i dzielimy je według przecinków
+        raw_answers = answer_match.group(1).strip()
+        if test_type == 'MULTIPLE_CHOICE':
+            # Dla MULTIPLE_CHOICE dzielimy według przecinków, a potem każdą odpowiedź dzielimy według spacji
+            answers = [ans.strip().split() for ans in raw_answers.split(',')]
+        else:
+            # Dla pozostałych typów pozostawiamy format z przecinkami
+            answers = [ans.strip() for ans in raw_answers.split(',')]
+    
+    # Usuwamy linię z odpowiedziami przed parsowaniem reszty zawartości
     content = re.sub(r'\[.*?\]$', '', content).strip()
 
-    # Dzielimy według wzorca numeracji pytań (np. "1.", "2.")
-    questions_raw = re.split(r'\n(?=\d+\.)', content.strip())
-
-    # Jeśli otrzymaliśmy tylko jeden element, spróbujmy podzielić według pustych linii
-    if len(questions_raw) <= 1:
-        questions_raw = re.split(r'\n\s*\n', content.strip())
-
+    # Dzielimy według pustych linii lub numeracji pytań
+    questions_raw = re.split(r'\n(?=\d+\.)|(\n\s*\n)', content.strip())
+    questions_raw = [q for q in questions_raw if q and q.strip()]
+    
     questions = []
 
-    for q_raw in questions_raw:
+    for i, q_raw in enumerate(questions_raw):
         if not q_raw.strip():  # Pomijamy puste
             continue
 
@@ -148,7 +158,7 @@ def parse_choice_test(content, test_type):
 
             choices.append({
                 "text": choice_text,
-                "letter": marker
+                "letter": marker.upper()  # Upewniamy się, że litera jest wielka
             })
 
             # Przygotowujemy następną literę dla automatycznego numerowania
@@ -159,16 +169,20 @@ def parse_choice_test(content, test_type):
             "id": len(questions) + 1,
             "choices": choices,
             "multiple_answers": test_type == 'MULTIPLE_CHOICE',
-            # to musi być PRZED przetwarzaniem tekstu
             "text": question_text,  # domyślnie cały tekst
             "has_gap": False  # domyślnie bez luk
         }
 
+        # Dodajemy informację o poprawnych odpowiedziach jeśli są dostępne
+        if answers and i < len(answers):
+            if test_type == 'MULTIPLE_CHOICE':
+                # Konwertujemy odpowiedzi na wielkie litery dla spójności
+                question_data["correct_answers"] = [ans.upper() for ans in answers[i]]
+            else:
+                question_data["correct_answer"] = answers[i].upper()
+
         # Tylko jeśli to CHOICE_WITH_GAPS, zmieniamy strukturę tekstu
         if test_type == 'CHOICE_WITH_GAPS':
-            # Najpierw usuńmy numerację z pytania
-            question_text = clean_question_text(question_text)
-            
             # Znajdź wszystkie luki w tekście
             gap_pattern = r'\[ _ \]'
             
@@ -176,7 +190,7 @@ def parse_choice_test(content, test_type):
             parts = []
             segments = re.split(f'({gap_pattern})', question_text)
             
-            for i, segment in enumerate(segments):
+            for segment in segments:
                 is_gap = segment == '[ _ ]'
                 parts.append({
                     "content": segment if not is_gap else "",

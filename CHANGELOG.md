@@ -154,4 +154,9 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Naprawiono problem z wykrywaniem luk w testach typu CHOICE_WITH_GAPS
 - Zmodyfikowano regex do dzielenia tekstu, aby zachować informację o lukach
 - Poprawiono renderowanie placeholderów luk w szablonie
+- Naprawiono parsowanie i walidację odpowiedzi w testach typu MULTIPLE_CHOICE
+- Zaktualizowano system sprawdzania odpowiedzi dla testów wielokrotnego wyboru
+- Poprawiono obsługę formularzy z wielokrotnym wyborem (checkboxy)
+- Zapewniono spójną obsługę wielkości liter w odpowiedziach
+
 
