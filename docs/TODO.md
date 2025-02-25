@@ -151,6 +151,153 @@
   - Obecny kod nie wykrywa poprawnie duplikatów w formacie "A,A,B"
   - Potrzebna modyfikacja regex w `validate_answers`
 
+## Przechowywanie testów i odpowiedzi
+
+### Rozbudowa modelu danych
+- [ ] Rozszerzyć model `Test` o pole przechowujące poprawne odpowiedzi
+  ```python
+  class Test(models.Model):
+      # istniejące pola...
+      correct_answers = models.JSONField(
+          null=True,
+          blank=True,
+          help_text="Prawidłowe odpowiedzi w formacie JSON"
+      )
+  ```
+- [ ] Dodać model `TestAttempt` do przechowywania prób rozwiązania testu
+  ```python
+  class TestAttempt(models.Model):
+      test = models.ForeignKey(Test, on_delete=models.CASCADE)
+      user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+      completed_at = models.DateTimeField(auto_now_add=True)
+      user_answers = models.JSONField()
+      score = models.FloatField()
+      max_score = models.IntegerField()
+      
+      @property
+      def percentage_score(self):
+          return (self.score / self.max_score * 100) if self.max_score > 0 else 0
+  ```
+- [ ] Zmodyfikować system sesji, aby płynnie przeszedł na korzystanie z modeli bazodanowych
+  ```python
+  # przykład w views.py
+  def save_test(request):
+      # Pobierz dane z sesji
+      test_data = request.session.get('test_data')
+      
+      # Utwórz nowy test
+      test = Test(
+          title=test_data['title'],
+          test_type=test_data['type'],
+          content=test_data['content'],
+          word_list=' - '.join(test_data['word_list']) if test_data.get('word_list') else '',
+          correct_answers=json.dumps(test_data['answers'])
+      )
+      test.save()
+      
+      # Opcjonalnie: przypisz do użytkownika
+      if request.user.is_authenticated:
+          test.created_by = request.user
+          test.save()
+          
+      return redirect('test_detail', pk=test.pk)
+  ```
+
+### Walidatory dla różnych typów testów
+- [ ] Stworzyć dedykowane klasy walidatorów dla każdego typu testu
+  ```python
+  # validators.py
+  class TestValidator:
+      """Bazowa klasa walidatora dla testów"""
+      
+      def validate(self, content):
+          """Implementacja w klasach potomnych"""
+          raise NotImplementedError
+  
+  class SingleChoiceValidator(TestValidator):
+      """Walidator dla testów jednokrotnego wyboru"""
+      
+      def validate(self, content):
+          # implementacja walidacji
+          pass
+  
+  class MultipleChoiceValidator(TestValidator):
+      """Walidator dla testów wielokrotnego wyboru"""
+      
+      def validate(self, content):
+          # implementacja walidacji
+          pass
+          
+  # Dodać pozostałe klasy walidatorów
+  ```
+- [ ] Zarejestrować walidatory w systemie
+  ```python
+  # validators_registry.py
+  VALIDATORS = {
+      'SINGLE_CHOICE': SingleChoiceValidator(),
+      'MULTIPLE_CHOICE': MultipleChoiceValidator(),
+      'CHOICE_WITH_GAPS': ChoiceWithGapsValidator(),
+      'TEXT_INPUT_MEMORY': TextInputMemoryValidator(),
+      'TEXT_INPUT_WORDLIST': TextInputWordlistValidator(),
+  }
+  
+  def get_validator(test_type):
+      """Zwraca odpowiedni walidator dla typu testu"""
+      return VALIDATORS.get(test_type)
+  ```
+- [ ] Zintegrować walidatory z formularzami
+  ```python
+  # forms.py
+  def clean(self):
+      cleaned_data = super().clean()
+      test_type = cleaned_data.get('test_type')
+      content = cleaned_data.get('content')
+      
+      validator = get_validator(test_type)
+      if validator:
+          try:
+              validator.validate(content)
+          except ValidationError as e:
+              raise ValidationError(str(e))
+      
+      return cleaned_data
+  ```
+
+## System zarządzania testami
+
+### Zarządzanie testami
+- [ ] Dodać CRUD dla testów (Create, Read, Update, Delete)
+- [ ] Implementacja widoku listy testów
+- [ ] Implementacja szczegółów testu
+- [ ] Dodać możliwość edycji istniejących testów
+- [ ] Implementacja systemu wyszukiwania i filtrowania testów
+
+### System użytkowników i uprawnień
+- [ ] Dodać uwierzytelnianie użytkowników
+- [ ] Implementacja rejestracji i logowania
+- [ ] Zdefiniować role (administrator, nauczyciel, uczeń)
+- [ ] Zarządzanie uprawnieniami do testów
+
+### Statystyki i analiza
+- [ ] Implementacja systemu zbierania statystyk z testów
+- [ ] Wizualizacja postępów ucznia
+- [ ] Analiza trudności pytań
+- [ ] Raportowanie wyników
+
+## Optymalizacje UX/UI
+
+### Doświadczenie użytkownika
+- [ ] Poprawić interfejs rozwiązywania testów
+- [ ] Dodać komunikaty podsumowujące wyniki
+- [ ] Implementacja podpowiedzi i wyjaśnień do odpowiedzi
+- [ ] Obsługa czasu na rozwiązanie testu
+
+### Zaawansowane parsowanie
+- [ ] Dodać system automatycznego wykrywania typu testu
+- [ ] Obsługa różnych formatów wejściowych (markdown, txt, doc)
+- [ ] Implementacja konwerterów między formatami
+- [ ] Dodać obsługę importu/eksportu w różnych formatach
+
 ## Pomysły do rozważenia
 
 ### Interfejs użytkownika
