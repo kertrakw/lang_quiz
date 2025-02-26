@@ -146,6 +146,12 @@ class TestCreateView(FormView):
     form_class = TestInputForm
     success_url = '/test/preview/'  # URL, na który przekierujemy po udanym przesłaniu formularza
 
+    def get_initial(self):
+        """Metoda zwracająca początkowe wartości dla formularza."""
+        initial = super().get_initial()
+        initial['title'] = 'New Test'  # Domyślny tytuł
+        return initial
+
     # views.py - w klasie TestCreateView, metoda form_valid
     def form_valid(self, form):
         """
