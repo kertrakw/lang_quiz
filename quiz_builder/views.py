@@ -14,6 +14,7 @@ from .parsers import parse_gap_test, parse_choice_test
 
 logger = logging.getLogger('quiz_builder.views')
 
+
 # Widok strony głównej - wyświetla podstawowy interfejs do tworzenia testów
 class HomeView(TemplateView):
     template_name = 'tests/home.html'
@@ -73,7 +74,11 @@ class TestCheckView(View):
         # Sprawdzamy odpowiedzi
         results = self.check_answers(test_data, answers)
 
-        return JsonResponse(results)
+        # Zapisujemy wyniki w sesji
+        request.session['test_results'] = results
+
+        # Przekierowujemy na stronę wyników
+        return redirect('test_results')
 
     def check_answers(self, test_data, submitted_answers):
         """
@@ -82,7 +87,7 @@ class TestCheckView(View):
         """
         test_type = test_data.get('type', '')
         correct_answers = test_data.get('answers', {})
-        
+
         results = {
             'total': len(correct_answers),
             'correct': 0,
@@ -93,20 +98,20 @@ class TestCheckView(View):
         for q_id, correct in correct_answers.items():
             answer_key = f'answer_{q_id}'
             submitted = submitted_answers.get(answer_key, '')
-            
+
             # Obsługa różnych typów testów
             if test_type == 'MULTIPLE_CHOICE':
                 # Konwertuj prawidłowe odpowiedzi na listę, jeśli są oddzielone spacjami
                 correct_list = correct.split() if isinstance(correct, str) else correct
                 correct_list = [ans.upper() for ans in correct_list]
-                
+
                 # Pobierz odpowiedzi użytkownika jako listę
                 submitted_list = submitted if isinstance(submitted, list) else [submitted]
                 submitted_list = [ans.upper() for ans in submitted_list if ans.strip()]
-                
+
                 # Sprawdź czy zbiory odpowiedzi są identyczne
                 is_correct = set(submitted_list) == set(correct_list)
-                
+
                 results['answers'][q_id] = {
                     'submitted': submitted_list,
                     'correct': correct_list,
@@ -116,9 +121,9 @@ class TestCheckView(View):
                 # Konwertujemy do jednolitego formatu (wielkie litery, usunięcie spacji)
                 correct_norm = correct.upper().strip() if isinstance(correct, str) else ''
                 submitted_norm = submitted.upper().strip() if isinstance(submitted, str) else ''
-                
+
                 is_correct = submitted_norm == correct_norm
-                
+
                 results['answers'][q_id] = {
                     'submitted': submitted,
                     'correct': correct,
@@ -128,7 +133,10 @@ class TestCheckView(View):
             if is_correct:
                 results['correct'] += 1
 
-        results['percentage'] = (results['correct'] / results['total']) * 100 if results['total'] > 0 else 0
+        results['percentage'] = (
+            (results['correct'] / results['total']) * 100
+            if results['total'] > 0 else 0
+        )
 
         return results
 
@@ -164,7 +172,8 @@ class TestCreateView(FormView):
             'title': cleaned_data['title'],
             'type': test_type,
             'content': content,
-            'word_list': [word.strip().lower() for word in cleaned_data.get('word_list', '').split(' - ')],
+            'word_list': [word.strip().lower() for word
+                          in cleaned_data.get('word_list', '').split(' - ')],
             'answers': {k: v.lower() for k, v in answers_dict.items()}
         }
 
@@ -173,3 +182,31 @@ class TestCreateView(FormView):
     def form_invalid(self, form):
         logger.error("Form errors: %s", form.errors)
         return super().form_invalid(form)
+
+
+class TestResultsView(TemplateView):
+    template_name = 'tests/test_results.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Pobieramy dane testu z sesji
+        test_data = self.request.session.get('test_data')
+        if not test_data:
+            return redirect('create_test')
+
+        # Pobieramy wyniki testu z sesji
+        results = self.request.session.get('test_results')
+        if not results:
+            return redirect('preview_test')
+
+        context.update({
+            'title': test_data.get('title', 'Test Results'),
+            'type': test_data.get('type', ''),
+            'results': results,
+            'percentage': results.get('percentage', 0),
+            'correct': results.get('correct', 0),
+            'total': results.get('total', 0)
+        })
+
+        return context

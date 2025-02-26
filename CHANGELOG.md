@@ -169,5 +169,20 @@ Projekt stosuje [Wersjonowanie semantyczne](https://semver.org/):
 - Dynamiczne wyświetlanie przykładu w zależności od wybranego typu testu
 - Style CSS zapewniające poprawne zawijanie tekstu w przykładach
 
+## [0.2.9] - [2025-02-26]
+
+### Dodano
+- Przycisk "Example Test" obok przycisku tworzenia testu
+- Modal z przykładami dla wszystkich typów testów
+- Dynamiczne wyświetlanie przykładu w zależności od wybranego typu testu
+- Style CSS zapewniające poprawne zawijanie tekstu w przykładach
+- Stronę wyników testu pokazującą ocenę i szczegółowe informacje
+- Możliwość próby ponownego rozwiązania testu lub edycji
+- Pakiet templatetags z niestandardowymi filtrami dla szablonów
+
+### Zmieniono
+- Zaktualizowano TestCheckView aby przekierowywał na stronę wyników
+- Ulepszono prezentację wyników testu z kolorowym oznaczeniem poprawnych/niepoprawnych odpowiedzi
+
 
 

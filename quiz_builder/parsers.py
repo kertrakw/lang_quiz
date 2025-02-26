@@ -116,19 +116,20 @@ def parse_choice_test(content, test_type):
         # Pobieramy odpowiedzi i dzielimy je według przecinków
         raw_answers = answer_match.group(1).strip()
         if test_type == 'MULTIPLE_CHOICE':
-            # Dla MULTIPLE_CHOICE dzielimy według przecinków, a potem każdą odpowiedź dzielimy według spacji
+            # Dla MULTIPLE_CHOICE dzielimy według przecinków,
+            # #a potem każdą odpowiedź dzielimy według spacji
             answers = [ans.strip().split() for ans in raw_answers.split(',')]
         else:
             # Dla pozostałych typów pozostawiamy format z przecinkami
             answers = [ans.strip() for ans in raw_answers.split(',')]
-    
+
     # Usuwamy linię z odpowiedziami przed parsowaniem reszty zawartości
     content = re.sub(r'\[.*?\]$', '', content).strip()
 
     # Dzielimy według pustych linii lub numeracji pytań
     questions_raw = re.split(r'\n(?=\d+\.)|(\n\s*\n)', content.strip())
     questions_raw = [q for q in questions_raw if q and q.strip()]
-    
+
     questions = []
 
     for i, q_raw in enumerate(questions_raw):
@@ -185,18 +186,18 @@ def parse_choice_test(content, test_type):
         if test_type == 'CHOICE_WITH_GAPS':
             # Znajdź wszystkie luki w tekście
             gap_pattern = r'\[ _ \]'
-            
+
             # Tworzymy listę części tekstu, naprzemiennie tekst i luka
             parts = []
             segments = re.split(f'({gap_pattern})', question_text)
-            
+
             for segment in segments:
                 is_gap = segment == '[ _ ]'
                 parts.append({
                     "content": segment if not is_gap else "",
                     "is_gap": is_gap
                 })
-            
+
             question_data["text"] = parts
             question_data["has_gap"] = True
 

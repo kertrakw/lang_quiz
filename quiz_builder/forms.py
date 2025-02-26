@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger('quiz_builder.views')
 
+
 # Formularz do tworzenia nowego testu - obsługuje różne typy testów i walidację danych
 class TestInputForm(forms.Form):
     # Pole na tytuł testu
@@ -72,7 +73,7 @@ class TestInputForm(forms.Form):
         # Rozdzielamy odpowiedzi dla poszczególnych pytań
         raw_answers = answer_match.group(1).strip()
         answer_groups = [ans.strip() for ans in raw_answers.split(',')]
-        
+
         # Walidacja w zależności od typu testu
         if test_type in ['SINGLE_CHOICE', 'CHOICE_WITH_GAPS']:
             # Sprawdzamy odpowiedzi dla każdego pytania
@@ -89,18 +90,18 @@ class TestInputForm(forms.Form):
                         f"For question {i+1}: Invalid answer format: {ans_group}. "
                         "For single choice tests use A-D or 1-4"
                     )
-        
+
         elif test_type == 'MULTIPLE_CHOICE':
             # Sprawdzamy odpowiedzi dla każdego pytania
             for i, ans_group in enumerate(answer_groups):
                 # Dzielimy odpowiedzi dla tego pytania według spacji
                 answers = ans_group.split()
-                
+
                 # Sprawdzamy czy odpowiedzi to pojedyncze litery A-D lub cyfry 1-4
                 # oraz czy nie ma duplikatów
                 seen = set()
                 logger.debug(f"Checking for duplicates in answers for question {i+1}: {answers}")
-                
+
                 for ans in answers:
                     if not re.match(r'^[A-Da-d1-4]$', ans):
                         logger.error(f"Invalid format for answer: {ans}")
@@ -108,7 +109,7 @@ class TestInputForm(forms.Form):
                             f"For question {i+1}: Invalid answer format: {ans}. "
                             "For multiple choice tests use A-D or 1-4"
                         )
-                    
+
                     if ans.upper() in seen:
                         logger.error(f"Duplicate answer found: {ans}")
                         logger.debug(f"Current seen answers: {seen}")
@@ -146,7 +147,7 @@ class TestInputForm(forms.Form):
                     )
                 # Sprawdzamy czy wszystkie słowa z word_list są użyte w odpowiedziach
                 words = {w.strip() for w in word_list.split(' - ')}
-                
+
                 # Spłaszczamy odpowiedzi do jednej listy
                 all_answers = []
                 for ans_group in answer_groups:
@@ -154,7 +155,7 @@ class TestInputForm(forms.Form):
                         all_answers.extend(ans_group.split())
                     else:
                         all_answers.append(ans_group)
-                
+
                 unused_words = words - {ans.strip() for ans in all_answers}
                 if unused_words:
                     raise ValidationError(
